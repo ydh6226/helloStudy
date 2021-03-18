@@ -53,8 +53,8 @@
             <h2>계정 만들기</h2>
         </div>
         <div class="row justify-content-center">
-            <form class="needs-validation col-sm-6" th:action="@{/signup}"
-                  th:object="${hello}" method="post" novalidate>
+            <form class="needs-validation col-sm-6" th:action="@{/sign-up}"
+                  th:object="${signUpForm}" method="post" novalidate>
                 <div class="form-group">
                     <label th:for="nickname">닉네임</label>
                     <input type="text" id="nickname" th:field="*{nickname}" class="form-control" placeholder="닉네임을 입력하세요"
