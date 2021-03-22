@@ -4,16 +4,22 @@ import com.hellostudy.domain.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AccountService {
 
     private final AccountRepository accountRepository;
 
     private final JavaMailSender javaMailSender;
 
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
     public void processNewAccount(SignUpForm form) {
         Account newAccount = saveNewAccount(form);
         newAccount.generateEmailCheckToken();
@@ -25,7 +31,7 @@ public class AccountService {
         Account newAccount = Account.builder()
                 .nickname(form.getNickname())
                 .email(form.getEmail())
-                .password(form.getPassword()) // TODO password 인코딩 해야함
+                .password(passwordEncoder.encode(form.getPassword()))
                 .studyCreatedByWeb(true)
                 .studyEnrollmentResultByWeb(true)
                 .studyUpdatedByWeb(true)
@@ -42,5 +48,11 @@ public class AccountService {
         mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken()
                 + "&email=" + newAccount.getEmail());
         javaMailSender.send(mailMessage);
+    }
+
+    public Account completeSignUp(String email) {
+        Account account = accountRepository.findByEmail(email);
+        account.completeSignUp();
+        return account;
     }
 }
