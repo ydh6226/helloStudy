@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,7 +64,8 @@ class AccountControllerTest {
                 .param("password", password)
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/"));
+                .andExpect(view().name("redirect:/"))
+                .andExpect(authenticated().withUsername("ydh"));
 
         Account findAccount = accountRepository.findByEmail(email);
 
@@ -107,7 +111,8 @@ class AccountControllerTest {
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(model().attributeExists("numberOfUser"))
-                .andExpect(model().attributeExists("nickname"));
+                .andExpect(model().attributeExists("nickname"))
+                .andExpect(authenticated());
     }
 
     @Test
@@ -128,14 +133,18 @@ class AccountControllerTest {
                 .param("token", "abcde")
                 .param("email", "abcde@email.com"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("error"));
+                .andExpect(model().attributeExists("error"))
+                .andExpect(unauthenticated());
+
 
         //토근이 잘못된 경우
         mockMvc.perform(get("/check-email-token")
                 .param("token", "abcde")
                 .param("email", account.getEmail()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("error"));
+                .andExpect(model().attributeExists("error"))
+                .andExpect(unauthenticated());
+
     }
 
 }

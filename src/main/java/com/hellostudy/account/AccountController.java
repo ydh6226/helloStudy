@@ -37,7 +37,9 @@ public class AccountController {
         if (result.hasErrors()) {
             return "account/sign-up";
         }
-        accountService.processNewAccount(form);
+
+        Account account = accountService.processNewAccount(form);
+        accountService.login(account);
         return "redirect:/";
     }
 
@@ -51,12 +53,15 @@ public class AccountController {
             return view;
         }
 
-        if (!findAccount.getEmailCheckToken().equals(token)) {
+        if (!findAccount.isValidToken(token)) {
             model.addAttribute("error", "wrong.token");
             return view;
         }
 
         Account account = accountService.completeSignUp(email);
+
+        accountService.login(account);
+
         model.addAttribute("nickname", account.getNickname());
         model.addAttribute("numberOfUser", accountRepository.count());
         return view;

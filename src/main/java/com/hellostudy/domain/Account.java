@@ -61,4 +61,8 @@ public class Account {
         emailVerified = true;
         joinedAt = LocalDateTime.now();
     }
+
+    public boolean isValidToken(String token) {
+        return this.emailCheckToken.equals(token);
+    }
 }
