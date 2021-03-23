@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title>helloStudy</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+
+    <!-- jdenticon   -->
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.1.0/dist/jdenticon.min.js" async
+            integrity="sha384-VngWWnG9GS4jDgsGEUNaoRQtfBGiIKZTiXwm9KpgAeaRn6Y/1tAFiyXqSzqC8Ga/" crossorigin="anonymous">
+    </script>
+
+    <style>
+        .container {
+            max-width: 100%;
+        }
+    </style>
+</head>
+
+<nav th:fragment="main-nav" class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" th:href="@{/}">
+        <img src="/images/logo_sm.png" width="30" height="30">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" aria-controls="navbarSupportedContent"
+         aria-expanded="false" aria-label="Toggle navigation">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <form th:action="@{/search/study}" class="form-inline" method="get">
+                    <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기" aria-label="Search">
+                </form>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav justify-content-end">
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" th:href="@{/login}">로그인</a>
+            </li>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" th:href="@{/sign-up}">가입</a>
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <a class="nav-link" th:href="@{/notifications}"><i class="fas fa-bell"></i></a>
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <a class="nav-link" th:href="@{/}"><span>스터디 개설 </span><i class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link dropdown-toggle" id="userDropDown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <svg class="rounded border bg-light" data-jdenticon-value="user127"
+                         th:data-jdenticon-value="${#authentication.name}" width="24" height="24"></svg>
+                </a>
+                <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropDown">
+                    <h6 class="dropdown-header">
+                        <span sec:authentication="name">Username</span>
+                    </h6>
+                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}">프로필</a>
+                    <a class="dropdown-item">스터디</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" th:href="@{'/settings/profile'}">설정</a>
+                    <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+                        <button class="dropdown-item" type="submit">로그아웃</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<footer th:fragment="footer">
+    <div class="row justify-content-center">
+        <img class="mb-2" src="/images/logo_long_kr.jpg" alt="" width="100">
+        <small class="d-block mb-3 text-muted">&copy; 2020</small>
+    </div>
+</footer>
+
+</html>
