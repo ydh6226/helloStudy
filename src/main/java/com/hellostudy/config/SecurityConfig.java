@@ -22,6 +22,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest()
                 .authenticated();
+
+        http.formLogin()
+                .loginPage("/login")
+//                .usernameParameter()
+//                .passwordParameter()
+                .permitAll()
+                .and()
+            .logout()
+                .logoutSuccessUrl("/");
     }
 
     @Override
