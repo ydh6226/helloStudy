@@ -66,4 +66,22 @@ public class AccountController {
         model.addAttribute("numberOfUser", accountRepository.count());
         return view;
     }
+
+    @GetMapping("/check-email")
+    public String ReRequestEmailTokenForm(@CurrentUser Account account, Model model) {
+        model.addAttribute("email", account.getEmail());
+        return "account/re-request-email";
+    }
+
+    @GetMapping("/check-email/re-request-token")
+    public String ReRequestEmailToken(@CurrentUser Account account, Model model) {
+        if (!account.canSendEmailToken()) {
+            model.addAttribute("error", "인증 이메일은 1시간에 한번만 전송할 수 있습니다.");
+            model.addAttribute("email", account.getEmail());
+            return "account/re-request-email";
+        }
+
+        accountService.ResendSignUpConfirmEmail(account.getEmail());
+        return "redirect:/";
+    }
 }

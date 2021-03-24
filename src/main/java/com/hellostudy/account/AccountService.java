@@ -33,6 +33,15 @@ public class AccountService {
         return newAccount;
     }
 
+    @Transactional
+    public void ResendSignUpConfirmEmail(String email) {
+        Account account = accountRepository.findByEmail(email);
+        account.generateEmailCheckToken();
+        account.initEmailTokenTime();
+        sendSignUpConfirmEmail(account);
+
+        login(account); //TODO 이 사용 방법 말고 다르게 login 된 계정 정보 변경 하는 법 찾기
+    }
 
     private Account saveNewAccount(SignUpForm form) {
         Account newAccount = Account.builder()
@@ -48,12 +57,12 @@ public class AccountService {
         return newAccount;
     }
 
-    private void sendSignUpConfirmEmail(Account newAccount) {
+    private void sendSignUpConfirmEmail(Account account) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(newAccount.getEmail());
+        mailMessage.setTo(account.getEmail());
         mailMessage.setSubject("스터디올래, 회원 가입 인증");
-        mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken()
-                + "&email=" + newAccount.getEmail());
+        mailMessage.setText("/check-email-token?token=" + account.getEmailCheckToken()
+                + "&email=" + account.getEmail());
         javaMailSender.send(mailMessage);
     }
 

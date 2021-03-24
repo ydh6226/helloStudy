@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html::main-nav"></div>
+
+<div class="container">
+    <div class="py-5 text-center" th:if="${error}">
+        <p class="lead">스터디 올래 이메일 재전송</p>
+        <div class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <p class="lead" th:text="${email}">hello@email.com</p>
+    </div>
+
+    <div class="py-5 text-center" th:if="${error == null}">
+        <p class="lead">스터디 올래 이메일 재전송</p>
+        <h2>스터디올레 서비스를 사용하려면 인증 이메일을 확인하세요.</h2>
+        <p class="lead" th:text="${email}">hello@email.com</p>
+        <a class="btn btn-outline-info" th:href="@{/check-email/re-request-token}"><span>재전송</span></a>
+    </div>
+    </div>
+
+<div th:replace="fragments.html::footer"></div>
+</body>
+</html>

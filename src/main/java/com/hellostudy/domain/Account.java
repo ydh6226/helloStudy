@@ -28,6 +28,8 @@ public class Account {
 
     private String emailCheckToken;
 
+    private LocalDateTime emailCheckTokenGeneratedAt;
+
     private LocalDateTime joinedAt;
 
     private String bio;
@@ -64,5 +66,15 @@ public class Account {
 
     public boolean isValidToken(String token) {
         return this.emailCheckToken.equals(token);
+    }
+
+    public void initEmailTokenTime() {
+        emailCheckTokenGeneratedAt = LocalDateTime.now();
+    }
+
+    public boolean canSendEmailToken() {
+        if (emailCheckTokenGeneratedAt == null)
+            return true;
+        return emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 }
