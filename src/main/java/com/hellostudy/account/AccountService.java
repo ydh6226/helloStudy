@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -43,7 +47,8 @@ public class AccountService implements UserDetailsService {
         account.initEmailTokenTime();
         sendSignUpConfirmEmail(account);
 
-        login(account); //TODO 이 사용 방법 말고 다르게 login 된 계정 정보 변경 하는 법 찾기
+        // 계정정보의 수정이 생겼으므로 Security가 관리 하는 계정업데이트
+        login(account);
     }
 
     private Account saveNewAccount(SignUpForm form) {
@@ -69,6 +74,7 @@ public class AccountService implements UserDetailsService {
         javaMailSender.send(mailMessage);
     }
 
+    @Transactional
     public Account completeSignUp(String email) {
         Account account = accountRepository.findByEmail(email);
         account.completeSignUp();
