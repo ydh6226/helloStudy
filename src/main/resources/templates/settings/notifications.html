@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+
+<div th:replace="fragments.html::main-nav"></div>
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-2">
+            <div th:replace="fragments.html::settings-menu ('notifications')"></div>
+        </div>
+        <div class="col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${message}">
+                <strong th:text="${message}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <h2 class="col">알림 설정</h2>
+            </div>
+            <div class="row mt-3">
+                <form class="col-12" th:action="@{/settings/notifications}" method="post" th:object="${notificationsForm}">
+                    <div class="form-group">
+                        <div class="alert alert-light col-10" role="alert">
+                            <a class="alert-link" th:href="@{/settings/zones}">주요 활동지역</a>에 <a class="alert-link" th:href="@{/settings/tags}">
+                            관심있는 주제</a>의 스터디가 만들어졌을 때 알림을 받을 방법을 설정하세요.
+                        </div>
+                        <div class="ml-1">
+                            <div class="custom-control custom-switch custom-control-inline">
+                                <input type="checkbox" class="custom-control-input" th:field="*{studyCreatedByEmail}" id="studyCreatedByEmail">
+                                <label class="custom-control-label" for="studyCreatedByEmail">이메일로 받기</label>
+                            </div>
+                            <div class="custom-control custom-switch custom-control-inline">
+                                <input type="checkbox" class="custom-control-input" th:field="*{studyCreatedByWeb}" id="studyCreatedByWeb">
+                                <label class="custom-control-label" for="studyCreatedByWeb">웹으로 받기</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="alert alert-light col-10" role="alert">
+                            <strong>스터디 모임 참가 신청</strong> 결과 알림을 받을 방법을 설정하세요.
+                        </div>
+                        <div class="ml-1">
+                            <div class="custom-control custom-switch custom-control-inline">
+                                <input type="checkbox" class="custom-control-input" th:field="*{studyEnrollmentResultByEmail}"
+                                       id="studyEnrollmentResultByEmail">
+                                <label class="custom-control-label" for="studyEnrollmentResultByEmail">이메일로 받기</label>
+                            </div>
+                            <div class="custom-control custom-switch custom-control-inline">
+                                <input type="checkbox" class="custom-control-input" th:field="*{studyEnrollmentResultByWeb}"
+                                       id="studyEnrollmentResultByWeb">
+                                <label class="custom-control-label" for="studyEnrollmentResultByWeb">웹으로 받기</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="alert alert-light col-10" role="alert">
+                            <strong>참여중인 스터디</strong>에 대한 알림을 받을 방법을 설정하세요.
+                        </div>
+                        <div class="ml-1">
+                            <div class="custom-control custom-switch custom-control-inline">
+                                <input type="checkbox" class="custom-control-input" th:field="*{studyUpdatedByEmail}" id="studyUpdatedByEmail">
+                                <label class="custom-control-label" for="studyUpdatedByEmail">이메일로 받기</label>
+                            </div>
+                            <div class="custom-control custom-switch custom-control-inline">
+                                <input type="checkbox" class="custom-control-input" th:field="*{studyUpdatedByWeb}" id="studyUpdatedByWeb">
+                                <label class="custom-control-label" for="studyUpdatedByWeb">웹으로 받기</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-10 text-center">
+                        <button class="btn btn-outline-primary" type="submit">저장하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:replace="fragments.html::form-validation"></div>
+<div th:replace="fragments.html::footer"></div>
+</body>

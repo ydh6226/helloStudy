@@ -62,9 +62,9 @@
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                 <a class="nav-link dropdown-toggle" id="userDropDown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <svg th:if="${#strings.isEmpty(account.profileImage)}" class="rounded border bg-light" data-jdenticon-value="user127"
+                    <svg th:if="${#strings.isEmpty(account?.profileImage)}" class="rounded border bg-light" data-jdenticon-value="user127"
                          th:data-jdenticon-value="${#authentication.name}" width="24" height="24"></svg>
-                    <img th:if="${!#strings.isEmpty(account.profileImage)}" th:src="${account.profileImage}"
+                    <img th:if="${!#strings.isEmpty(account?.profileImage)}" th:src="${account.profileImage}"
                          class="rounded border" width="24" height="24" alt="">
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropDown">

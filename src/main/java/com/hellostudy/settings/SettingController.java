@@ -3,7 +3,11 @@ package com.hellostudy.settings;
 import com.hellostudy.account.AccountService;
 import com.hellostudy.account.CurrentUser;
 import com.hellostudy.domain.Account;
+import com.hellostudy.settings.form.NotificationsForm;
+import com.hellostudy.settings.form.PasswordForm;
+import com.hellostudy.settings.form.ProfileForm;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,12 +24,21 @@ public class SettingController {
     static final String SETTINGS_PROFILE_URL = "/settings/profile";
     static final String SETTINGS_PROFILE_VIEW_NAME = "settings/profile";
 
+    static final String SETTINGS_PASSWORD_URL = "/settings/password";
+    static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
+
+    static final String SETTINGS_NOTIFICATIONS_URL = "/settings/notifications";
+    static final String SETTINGS_NOTIFICATIONS_VIEW_NAME = "/settings/notifications";
+
+
     private final AccountService accountService;
+
+    private final ModelMapper modelMapper;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
-        model.addAttribute(new ProfileForm(account));
+        model.addAttribute(modelMapper.map(account, ProfileForm.class));
         return SETTINGS_PROFILE_VIEW_NAME;
     }
 
@@ -40,4 +53,47 @@ public class SettingController {
         attributes.addFlashAttribute("message", "프로필을 수정했습니다.");
         return "redirect:/settings/profile";
     }
+
+    @GetMapping(SETTINGS_PASSWORD_URL)
+    public String updatePasswordForm(Model model) {
+        model.addAttribute(new PasswordForm());
+        return SETTINGS_PASSWORD_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_PASSWORD_URL)
+    public String updatePassword(@CurrentUser Account account, @Valid PasswordForm passwordForm, BindingResult result,
+                                 Model model, RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            return SETTINGS_PASSWORD_VIEW_NAME;
+        }
+
+        if (!passwordForm.getPassword().equals(passwordForm.getConfirmPassword())) {
+            model.addAttribute("error", "비밀번호 확인값이 일치하지 않습니다.");
+            return SETTINGS_PASSWORD_VIEW_NAME;
+        }
+
+        accountService.updatePassword(account, passwordForm.getPassword());
+        attributes.addFlashAttribute("message", "비밀번호를 변경했습니다.");
+
+        return "redirect:" + SETTINGS_PASSWORD_URL;
+    }
+
+    @GetMapping(SETTINGS_NOTIFICATIONS_URL)
+    public String updateNotificationsForm(@CurrentUser Account account, Model model) {
+        model.addAttribute(modelMapper.map(account, NotificationsForm.class));
+        return SETTINGS_NOTIFICATIONS_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_NOTIFICATIONS_URL)
+    public String updateNotifications(@CurrentUser Account account, Model model, NotificationsForm form,
+                                      BindingResult result, RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            return SETTINGS_NOTIFICATIONS_VIEW_NAME;
+        }
+
+        accountService.updateNotifications(account, form);
+        attributes.addFlashAttribute("message", "알림 설정을 변경했습니다.");
+        return "redirect:" + SETTINGS_NOTIFICATIONS_URL;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.hellostudy.settings;
+package com.hellostudy.settings.form;
 
 import com.hellostudy.domain.Account;
 import lombok.Data;
@@ -24,12 +24,4 @@ public class ProfileForm {
     String location;
 
     private String profileImage;
-
-    public ProfileForm(Account account) {
-        this.bio = account.getBio();
-        this.url = account.getUrl();
-        this.occupation = account.getOccupation();
-        this.location = account.getLocation();
-        this.profileImage = account.getProfileImage();
-    }
 }

@@ -1,5 +1,6 @@
 package com.hellostudy.domain;
 
+import com.hellostudy.settings.form.NotificationsForm;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @EqualsAndHashCode(of = "id")
-@Getter
+@Getter @Setter
 @Builder @NoArgsConstructor @AllArgsConstructor
 public class Account {
 
@@ -84,6 +85,18 @@ public class Account {
         this.occupation = occupation;
         this.location = location;
         this.profileImage = profileImage;
-        // TODO: 2021-03-30 이미지 수정 기능 추가
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateNotifications(NotificationsForm form) {
+        this.studyCreatedByEmail = form.isStudyCreatedByEmail();
+        this.studyCreatedByWeb = form.isStudyCreatedByWeb();
+        this.studyEnrollmentResultByEmail = form.isStudyEnrollmentResultByEmail();
+        this.studyEnrollmentResultByWeb = form.isStudyEnrollmentResultByWeb();
+        this.studyUpdatedByEmail = form.isStudyUpdatedByEmail();
+        this.studyUpdatedByWeb = form.isStudyUpdatedByWeb();
     }
 }

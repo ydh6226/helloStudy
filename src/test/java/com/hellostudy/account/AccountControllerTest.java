@@ -200,4 +200,5 @@ class AccountControllerTest {
                 .andExpect(view().name("account/re-request-email"))
                 .andExpect(model().attributeExists("error"));
     }
+
 }

@@ -96,4 +96,6 @@ public class AccountController {
         model.addAttribute("isOwner", findAccount.equals(account));
         return "account/profile";
     }
+
+
 }

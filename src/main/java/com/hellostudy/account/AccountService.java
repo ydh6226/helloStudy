@@ -1,15 +1,14 @@
 package com.hellostudy.account;
 
 import com.hellostudy.domain.Account;
-import com.hellostudy.settings.ProfileForm;
+import com.hellostudy.settings.form.NotificationsForm;
+import com.hellostudy.settings.form.ProfileForm;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,8 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -108,6 +105,18 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public void updateProfile(Account account, ProfileForm form) {
         account.updateProfile(form.getBio(), form.getUrl(), form.getOccupation(), form.getLocation(), form.getProfileImage());
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void updatePassword(Account account, String password) {
+        Account findAccount = accountRepository.findByEmail(account.getEmail());
+        findAccount.updatePassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void updateNotifications(Account account, NotificationsForm form) {
+        account.updateNotifications(form);
         accountRepository.save(account);
     }
 }
