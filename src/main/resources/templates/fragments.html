@@ -62,8 +62,10 @@
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                 <a class="nav-link dropdown-toggle" id="userDropDown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <svg class="rounded border bg-light" data-jdenticon-value="user127"
+                    <svg th:if="${#strings.isEmpty(account.profileImage)}" class="rounded border bg-light" data-jdenticon-value="user127"
                          th:data-jdenticon-value="${#authentication.name}" width="24" height="24"></svg>
+                    <img th:if="${!#strings.isEmpty(account.profileImage)}" th:src="${account.profileImage}"
+                         class="rounded border" width="24" height="24" alt="">
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropDown">
                     <h6 class="dropdown-header">
@@ -82,6 +84,14 @@
     </div>
 </nav>
 
+<div th:fragment="settings-menu (currentMenu)" class="list-group">
+    <a th:href="@{/settings/profile}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'profile'}  ? active">프로필</a>
+    <a th:href="@{/settings/password}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active">패스워드</a>
+    <a th:href="@{/settings/notifications}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notifications'} ? active">알림</a>
+    <a th:href="@{/settings/tags}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'} ? active">관심 주제</a>
+    <a th:href="@{/settings/zones}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'zones'} ? active">활동 지역</a>
+    <a th:href="@{/settings/account}" class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'account'} ? active">계정</a>
+</div>
 
 <script type="application/javascript" th:fragment="form-validation">
     (function () {
@@ -102,6 +112,7 @@
         })
     }())
 </script>
+
 <footer th:fragment="footer">
     <div class="row justify-content-center">
         <img class="mb-2" src="/images/logo_long_kr.jpg" alt="" width="100">

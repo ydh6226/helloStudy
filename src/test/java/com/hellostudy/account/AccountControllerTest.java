@@ -1,6 +1,7 @@
 package com.hellostudy.account;
 
 import com.hellostudy.domain.Account;
+import com.hellostudy.settings.SettingController;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

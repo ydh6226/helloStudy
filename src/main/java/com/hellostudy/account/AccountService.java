@@ -1,6 +1,7 @@
 package com.hellostudy.account;
 
 import com.hellostudy.domain.Account;
+import com.hellostudy.settings.ProfileForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -102,5 +103,11 @@ public class AccountService implements UserDetailsService {
         }
 
         return new UserAccount(account);
+    }
+
+    @Transactional
+    public void updateProfile(Account account, ProfileForm form) {
+        account.updateProfile(form.getBio(), form.getUrl(), form.getOccupation(), form.getLocation(), form.getProfileImage());
+        accountRepository.save(account);
     }
 }

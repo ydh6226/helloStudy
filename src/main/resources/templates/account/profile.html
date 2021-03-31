@@ -16,7 +16,7 @@
                      th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>
                 <img th:if="${!#strings.isEmpty(account.profileImage)}"
                      class="img-fluid float-left rounded img-thumbnail"
-                     th:src="${account.profileImage}" width="24" height="24"/>
+                     th:src="${account.profileImage}" width="125" height="125"/>
             </div>
             <div class="col-8">
                 <h1 class="display-4" th:text="${account.getNickname()}">username</h1>

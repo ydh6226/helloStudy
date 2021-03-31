@@ -77,4 +77,13 @@ public class Account {
             return true;
         return emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
+
+    public void updateProfile(String bio, String url, String occupation, String location, String profileImage) {
+        this.bio = bio;
+        this.url = url;
+        this.occupation = occupation;
+        this.location = location;
+        this.profileImage = profileImage;
+        // TODO: 2021-03-30 이미지 수정 기능 추가
+    }
 }
