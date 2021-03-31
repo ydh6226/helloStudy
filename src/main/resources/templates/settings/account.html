@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+
+<div th:replace="fragments.html::main-nav"></div>
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-2">
+            <div th:replace="fragments.html::settings-menu ('account')"></div>
+        </div>
+        <div class="col-8">
+            <div class="alert alert-success alert-dismissible fade show col-sm-8" role="alert" th:if="${message}">
+                <strong th:text="${message}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <h2 class="col">닉네임 변경</h2>
+            </div>
+            <div class="row mt-3">
+                <form class="needs-validation col-sm-8" th:action="@{/settings/account}" method="post" th:object="${nicknameForm}" novalidate>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="nicknameForm" th:field="*{nickname}" aria-describedby="nicknameHelp"
+                               minlength="3" maxlength="20" required>
+                        <small id="nicknameHelp" class="form-text text-muted">
+                            공백없이 문자와 숫자로만 3자 이상 20자 이내로 입력하세요.
+                        </small>
+                        <div class="invalid-feedback">
+                            형식에 맞지 않습니다.
+                        </div>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></small>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small id="btnHelp" class="form-text text-danger">페이지 링크 또한 변경됩니다.</small>
+                        <button class="btn btn-outline-primary" aria-describedby="btnHelp">변경하기</button>
+                    </div>
+                </form>
+
+                <hr>
+                <div>
+                    <!-- 계정삭제 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:replace="fragments.html::form-validation"></div>
+<div th:replace="fragments.html::footer"></div>
+</body>

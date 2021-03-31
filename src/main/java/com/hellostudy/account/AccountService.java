@@ -95,7 +95,7 @@ public class AccountService implements UserDetailsService {
         if (account == null) {
             account = accountRepository.findByNickname(emailOrNickName);
             if (account == null) {
-                throw  new UsernameNotFoundException(emailOrNickName);
+                throw new UsernameNotFoundException(emailOrNickName);
             }
         }
 
@@ -118,5 +118,12 @@ public class AccountService implements UserDetailsService {
     public void updateNotifications(Account account, NotificationsForm form) {
         account.updateNotifications(form);
         accountRepository.save(account);
+    }
+
+    @Transactional
+    public void updateNickname(Account account, String nickname) {
+        account.updateNickname(nickname);
+        accountRepository.save(account);
+        login(account);
     }
 }

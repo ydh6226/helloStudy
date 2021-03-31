@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @EqualsAndHashCode(of = "id")
-@Getter @Setter
+@Getter
 @Builder @NoArgsConstructor @AllArgsConstructor
 public class Account {
 
@@ -98,5 +98,9 @@ public class Account {
         this.studyEnrollmentResultByWeb = form.isStudyEnrollmentResultByWeb();
         this.studyUpdatedByEmail = form.isStudyUpdatedByEmail();
         this.studyUpdatedByWeb = form.isStudyUpdatedByWeb();
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

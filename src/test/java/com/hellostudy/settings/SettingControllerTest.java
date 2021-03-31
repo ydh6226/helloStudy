@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,4 +146,54 @@ class SettingControllerTest {
                 .andExpect(model().attributeExists("error"));
     }
 
+    @Test
+    @WithUserDetails(value = nickname, setupBefore = TEST_EXECUTION)
+    @DisplayName("닉네임 수정 폼")
+    void updateNicknameForm() throws Exception {
+        mockMvc.perform(get(SettingController.SETTINGS_ACCOUNT_URL))
+                .andExpect(status().isOk())
+                .andExpect(view().name(SettingController.SETTINGS_ACCOUNT_VIEW_NAME))
+                .andExpect(model().attributeExists("nicknameForm"));
+    }
+
+    @Test
+    @WithUserDetails(value = nickname, setupBefore = TEST_EXECUTION)
+    @DisplayName("닉네임 수정 - 입력값 정상")
+    void updateNickname() throws Exception {
+        String newNickname = "hello2";
+
+        mockMvc.perform(post(SettingController.SETTINGS_ACCOUNT_URL)
+                .param("nickname", newNickname)
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(SettingController.SETTINGS_ACCOUNT_URL))
+                .andExpect(flash().attributeExists("message"));
+
+        Account findAccount = accountRepository.findByEmail(email);
+        assertThat(findAccount.getNickname()).isEqualTo(newNickname);
+    }
+
+    @Test
+    @WithUserDetails(value = nickname, setupBefore = TEST_EXECUTION)
+    @DisplayName("닉네임 수정 - 입력값 오류")
+    void updateNicknameWithWrongNickname() throws Exception {
+
+        //닉네임이 너무 짧은 경우
+        String newNickname = "he";
+        mockMvc.perform(post(SettingController.SETTINGS_ACCOUNT_URL)
+                .param("nickname", newNickname)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name(SettingController.SETTINGS_ACCOUNT_VIEW_NAME))
+                .andExpect(model().hasErrors());
+
+        //이미 존재하는 닉네임 인경우
+        mockMvc.perform(post(SettingController.SETTINGS_ACCOUNT_URL)
+                .param("nickname", nickname)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name(SettingController.SETTINGS_ACCOUNT_VIEW_NAME))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeExists("nicknameForm"));
+    }
 }
