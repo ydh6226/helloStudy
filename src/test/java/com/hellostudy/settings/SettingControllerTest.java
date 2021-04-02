@@ -2,7 +2,7 @@ package com.hellostudy.settings;
 
 import com.hellostudy.account.AccountRepository;
 import com.hellostudy.account.AccountService;
-import com.hellostudy.account.SignUpForm;
+import com.hellostudy.account.form.SignUpForm;
 import com.hellostudy.domain.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;

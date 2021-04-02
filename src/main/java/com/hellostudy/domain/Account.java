@@ -5,7 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @EqualsAndHashCode(of = "id")
@@ -33,6 +33,10 @@ public class Account {
 
     private LocalDateTime joinedAt;
 
+    private String emailLoginToken;
+
+    private LocalDateTime emailLoginTokenGeneratedAt;
+
     private String bio;
 
     private String url;
@@ -56,6 +60,9 @@ public class Account {
 
     private boolean studyUpdatedByWeb;
 
+    @ManyToMany
+    private Set<Tag> tags = new HashSet<>();
+
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
     }
@@ -78,6 +85,19 @@ public class Account {
             return true;
         return emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
+
+    public void generateEmailLoginToken() {
+        this.emailLoginToken = UUID.randomUUID().toString();
+        this.emailLoginTokenGeneratedAt = LocalDateTime.now();
+    }
+
+
+    public boolean canSendEmailLoginToken() {
+        if (emailLoginTokenGeneratedAt == null)
+            return true;
+        return emailLoginTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
+    }
+
 
     public void updateProfile(String bio, String url, String occupation, String location, String profileImage) {
         this.bio = bio;
@@ -103,4 +123,10 @@ public class Account {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
 }

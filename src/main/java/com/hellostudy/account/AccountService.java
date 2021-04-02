@@ -1,10 +1,11 @@
 package com.hellostudy.account;
 
+import com.hellostudy.account.form.SignUpForm;
 import com.hellostudy.domain.Account;
+import com.hellostudy.domain.Tag;
 import com.hellostudy.settings.form.NotificationsForm;
 import com.hellostudy.settings.form.ProfileForm;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -125,5 +128,34 @@ public class AccountService implements UserDetailsService {
         account.updateNickname(nickname);
         accountRepository.save(account);
         login(account);
+    }
+
+    @Transactional
+    public void sendLoginLink(String email) {
+        Account account = accountRepository.findByEmail(email);
+        account.generateEmailLoginToken();
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setSubject("스터디 올래, 로그인 링크");
+        mailMessage.setText("/login-by-Email?token=" + account.getEmailLoginToken() + "&email=" + email);
+        javaMailSender.send(mailMessage);
+    }
+
+    @Transactional
+    public void addTag(Account account, Tag tag) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        findAccount.ifPresent(a -> a.getTags().add(tag));
+    }
+
+    public Set<Tag> getTags(Account account) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        return findAccount.orElseThrow().getTags();
+    }
+
+    @Transactional
+    public void removeTag(Account account, Tag title) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        findAccount.ifPresent(a -> a.getTags().remove(title));
     }
 }

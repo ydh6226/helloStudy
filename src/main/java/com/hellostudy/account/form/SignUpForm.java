@@ -1,4 +1,4 @@
-package com.hellostudy.account;
+package com.hellostudy.account.form;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

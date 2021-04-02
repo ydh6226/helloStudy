@@ -1,5 +1,9 @@
 package com.hellostudy.account;
 
+import com.hellostudy.account.form.EmailForm;
+import com.hellostudy.account.form.SignUpForm;
+import com.hellostudy.account.validator.EmailFormValidator;
+import com.hellostudy.account.validator.SignUpFormValidator;
 import com.hellostudy.domain.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,10 +24,17 @@ public class AccountController {
 
     private final SignUpFormValidator signUpFormValidator;
 
+    private final EmailFormValidator emailFormValidator;
+
     //클래스이름과 camel-case로 연결됨
     @InitBinder("signUpForm")
-    public void initBinder(WebDataBinder webDataBinder) {
+    public void signUpFormValidation(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(signUpFormValidator);
+    }
+
+    @InitBinder("emailForm")
+    public void emailFormValidation(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(emailFormValidator);
     }
 
     @GetMapping("/sign-up")
@@ -95,6 +106,49 @@ public class AccountController {
         model.addAttribute("account", findAccount);
         model.addAttribute("isOwner", findAccount.equals(account));
         return "account/profile";
+    }
+
+    @GetMapping("/email-login")
+    public String sendEmailLoginLinkForm(Model model) {
+        model.addAttribute(new EmailForm());
+        return "account/emailLogin";
+    }
+
+    @PostMapping("/email-login")
+    public String sendEmailLoginLink(@Valid EmailForm emailForm, BindingResult result, Model model) {
+        String view = "account/emailLogin";
+        if (result.hasErrors()) {
+            return view;
+        }
+
+        Account account = accountRepository.findByEmail(emailForm.getEmail());
+        if (!account.canSendEmailLoginToken()) {
+            model.addAttribute("error", "로그인링크는 한시간에 한번만 발송가능합니다.");
+            return view;
+        }
+
+        accountService.sendLoginLink(emailForm.getEmail());
+        model.addAttribute("message", "이메일 인증 메일을 발송했습니다.");
+        return view;
+    }
+
+    @GetMapping("login-by-Email")
+    public String loginByEmail(String token, String email, Model model) {
+        String view = "account/login-by-email";
+
+        Account account = accountRepository.findByEmail(email);
+        if (!accountRepository.existsByEmail(email)) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+
+        if (!account.getEmailLoginToken().equals(token)) {
+            model.addAttribute("error", "wrong.token");
+            return view;
+        }
+
+        accountService.login(account);
+        return view;
     }
 
 

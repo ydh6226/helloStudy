@@ -1,5 +1,7 @@
-package com.hellostudy.account;
+package com.hellostudy.account.validator;
 
+import com.hellostudy.account.AccountRepository;
+import com.hellostudy.account.form.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

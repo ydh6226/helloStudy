@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+<div>
+    <div th:replace="fragments.html::main-nav"></div>
+    <div class="container">
+        <div class="py-5 text-center">
+            <p class="lead">스터디올래</p>
+            <h2>패스워드 없이 로그인 하기</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${message}">
+                <strong th:text="${message}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error}">
+                <strong th:text="${error}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <form class="col-sm-6" th:action="@{/email-login}" method="post" th:object="${emailForm}">
+            <div class="form-group">
+                <label for="email">가입할 때 사용한 이메일</label>
+                <input id="email" type="text" name="username" class="form-control" th:field="*{email}"
+                       placeholder="hello@email.com">
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-success" type="submit" aria-describedby="submitHelp">
+                    로그인 링크 보내기
+                </button>
+                <small id="submitHelp" class="form-text text-muted">
+                    스터디올래에 처음 오신거라면 <a th:href="@{/sign-up}">계정을 먼저 만드세요.</a>
+                </small>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="fragments.html::footer"></div>
+</div>
+</body>
