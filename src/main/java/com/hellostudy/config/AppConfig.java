@@ -23,9 +23,9 @@ public class AppConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-//                .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE)
-//                .setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
+//                .setMatchingStrategy(MatchingStrategies.STRICT);
+                .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE)
+                .setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
         return modelMapper;
     }
 }

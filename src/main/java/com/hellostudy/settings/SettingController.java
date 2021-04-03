@@ -158,9 +158,8 @@ public class SettingController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(SETTINGS_TAGS_URL + "/add")
-    public void addTag(@CurrentUser Account account, Model model, @RequestBody TagForm tagForm) {
+    public void addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
-
         Tag tag = tagRepository.findByTitle(title)
                 .orElseGet(() -> tagRepository.save(new Tag(title)));
 

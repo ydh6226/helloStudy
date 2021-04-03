@@ -10,7 +10,7 @@ import java.util.*;
 @Entity
 @EqualsAndHashCode(of = "id")
 @Getter
-@Builder @NoArgsConstructor @AllArgsConstructor
+@Builder @Setter @NoArgsConstructor @AllArgsConstructor
 public class Account {
 
     @Id @GeneratedValue
@@ -50,15 +50,15 @@ public class Account {
 
     private boolean studyCreatedByEmail;
 
-    private boolean studyCreatedByWeb;
+    private boolean studyCreatedByWeb = true;
 
     private boolean studyEnrollmentResultByEmail;
 
-    private boolean studyEnrollmentResultByWeb;
+    private boolean studyEnrollmentResultByWeb = true;
 
     private boolean studyUpdatedByEmail;
 
-    private boolean studyUpdatedByWeb;
+    private boolean studyUpdatedByWeb = true;
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
