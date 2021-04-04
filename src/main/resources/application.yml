@@ -17,7 +17,6 @@ spring:
         format_sql: true
 
 
-
 # 서버가 세션 가지고 있는 시간 (default: 30m)
 #server:
 #  servlet:

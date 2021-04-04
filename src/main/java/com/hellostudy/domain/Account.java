@@ -63,6 +63,9 @@ public class Account {
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private Set<Zone> zones = new HashSet<>();
+
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
     }
@@ -123,10 +126,4 @@ public class Account {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
-
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    }
-
 }

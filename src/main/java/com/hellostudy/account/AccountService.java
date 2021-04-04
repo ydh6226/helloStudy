@@ -3,6 +3,7 @@ package com.hellostudy.account;
 import com.hellostudy.account.form.SignUpForm;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Tag;
+import com.hellostudy.domain.Zone;
 import com.hellostudy.settings.form.NotificationsForm;
 import com.hellostudy.settings.form.ProfileForm;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,7 @@ public class AccountService implements UserDetailsService {
                 .studyEnrollmentResultByWeb(true)
                 .studyUpdatedByWeb(true)
                 .tags(new HashSet<>())
+                .zones(new HashSet<>())
                 .build();
         newAccount.generateEmailCheckToken();
 
@@ -145,20 +147,37 @@ public class AccountService implements UserDetailsService {
         javaMailSender.send(mailMessage);
     }
 
-    @Transactional
-    public void addTag(Account account, Tag tag) {
-        Optional<Account> findAccount = accountRepository.findById(account.getId());
-        findAccount.ifPresent(a -> a.getTags().add(tag));
-    }
-
     public Set<Tag> getTags(Account account) {
         Optional<Account> findAccount = accountRepository.findById(account.getId());
         return findAccount.orElseThrow().getTags();
     }
 
     @Transactional
+    public void addTag(Account account, Tag tag) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        findAccount.ifPresent(a -> a.getTags().add(tag));
+    }
+
+    @Transactional
     public void removeTag(Account account, Tag title) {
         Optional<Account> findAccount = accountRepository.findById(account.getId());
         findAccount.ifPresent(a -> a.getTags().remove(title));
+    }
+
+    public Set<Zone> getZones(Account account) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        return findAccount.orElseThrow().getZones();
+    }
+
+    @Transactional
+    public void addZone(Account account, Zone zone) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        findAccount.orElseThrow().getZones().add(zone);
+    }
+
+    @Transactional
+    public void removeZone(Account account, Zone zone) {
+        Optional<Account> findAccount = accountRepository.findById(account.getId());
+        findAccount.orElseThrow().getZones().remove(zone);
     }
 }

@@ -6,11 +6,13 @@ import com.hellostudy.account.AccountService;
 import com.hellostudy.account.CurrentUser;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Tag;
+import com.hellostudy.domain.Zone;
 import com.hellostudy.settings.form.*;
 import com.hellostudy.tag.TagRepository;
-import lombok.Getter;
+import com.hellostudy.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,8 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.awt.desktop.OpenFilesEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -47,14 +47,19 @@ public class SettingController {
     static final String SETTINGS_TAGS_URL = "/settings/tags";
     static final String SETTINGS_TAGS_VIEW_NAME = "settings/tags";
 
+    static final String SETTINGS_ZONES_URL = "/settings/zones";
+    static final String SETTINGS_ZONES_VIEW_NAME = "settings/zones";
+
 
     private final AccountService accountService;
+
+    private final TagRepository tagRepository;
+
+    private final ZoneRepository zoneRepository;
 
     private final ModelMapper modelMapper;
 
     private final NicknameValidator nicknameValidator;
-
-    private final TagRepository tagRepository;
 
     private final ObjectMapper objectMapper;
 
@@ -167,7 +172,7 @@ public class SettingController {
     }
 
     @PostMapping(SETTINGS_TAGS_URL + "/remove")
-    public ResponseEntity<String> removeTag(@CurrentUser Account account, Model model, @RequestBody TagForm tagForm) {
+    public ResponseEntity<String> removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
 
         Optional<Tag> findTag = tagRepository.findByTitle(title);
@@ -177,5 +182,56 @@ public class SettingController {
 
         accountService.removeTag(account, findTag.get());
         return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
+    @GetMapping(SETTINGS_ZONES_URL)
+    public String updateZonesForm(@CurrentUser Account account, Model model) throws JsonProcessingException {
+        model.addAttribute(account);
+
+        List<String> zonesOfAccount = accountService.getZones(account).stream()
+                .map(Zone::getFullName)
+                .collect(Collectors.toList());
+        model.addAttribute("zones", zonesOfAccount);
+
+        List<String> allZonesName = zoneRepository.findAll().stream()
+                .map(Zone::getFullName)
+                .collect(Collectors.toList());
+        model.addAttribute("whiteList", objectMapper.writeValueAsString(allZonesName));
+
+        return SETTINGS_ZONES_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_ZONES_URL + "/add")
+    public ResponseEntity<String> addZone(@CurrentUser Account account, @Valid @RequestBody ZoneForm zoneForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>("wrong zone name", HttpStatus.BAD_REQUEST);
+        }
+        return processZone(account, zoneForm, Process.ADD);
+    }
+
+    @PostMapping(SETTINGS_ZONES_URL + "/remove")
+    public ResponseEntity<String> removeZone(@CurrentUser Account account, @Valid @RequestBody ZoneForm zoneForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>("wrong zone name", HttpStatus.BAD_REQUEST);
+        }
+        return processZone(account, zoneForm, Process.REMOVE);
+    }
+
+    private ResponseEntity<String> processZone(Account account, ZoneForm zoneForm, Process process) {
+        Optional<Zone> zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (zone.isEmpty()) {
+            return new ResponseEntity<>("That zone doesn't exist", HttpStatus.BAD_REQUEST);
+        }
+
+        if (process == Process.ADD) {
+            accountService.addZone(account, zone.get());
+        } else if (process == Process.REMOVE){
+            accountService.removeZone(account, zone.get());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private enum Process {
+        ADD, REMOVE
     }
 }

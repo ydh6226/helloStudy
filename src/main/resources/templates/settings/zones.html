@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:include="fragments.html::head"></head>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.0/tagify.min.css" integrity="sha512-UZcJ2LgifDD+cGLeNAPay6av2WFnNk/0HnmOnMoib7FujOV1CuQygHjvOFAwvx4u04CF0o1yGgyH1xRr3XvCKA==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.0/jQuery.tagify.min.js" integrity="sha512-uo3YEvOn+6fD2GRFliFMDNaI2fxuMkjzf42ThL7IZovwkOW6a5jWDVjWx+uczOiTt3ZlJRWT1vuqbjx3AHwiPw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.0/tagify.min.js" integrity="sha512-cgnDkuTNBjsM27giWgYIQZv4cGvbwttJpS3ADNxNLRjzKvUwRCoQlJYJzkfpzP20rJh2ChZo+5GQPtRhHzXHfQ==" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        .tagify--outside{
+            border: 0;
+        }
+    </style>
+
+</head>
+<body class="bg-light">
+
+<div th:replace="fragments.html::main-nav"></div>
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-2">
+            <div th:replace="fragments.html::settings-menu ('zones')"></div>
+        </div>
+        <div class="col-8">
+            <div class="row mt-3">
+                <div class="row">
+                    <h2 class="col">주요 활동 지역</h2>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-info" role="alert">
+                            주로 스터디를 다닐 수 있는 지역을 등록하세요. 해당 지역에 스터디가 생기면 알림을 받을 수 있습니다.
+                            스터디올래에 등록된 지역만 선택할 수 있습니다.
+                        </div>
+                        <input id="zones" type="text" name="zones" class="tagify--outside"
+                               th:value="${#strings.listJoin(zones, ',')}" aria-describedby="zonesHelp">
+                        <div id="whiteList" th:text="${whiteList}" hidden=""></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments.html::footer"></div>
+<script type="application/javascript" th:inline="javascript">
+    $(function () {
+        let csrfToken = /*[[${_csrf.token}]]*/ null
+        let csrfHeader = /*[[${_csrf.headerName}]]*/ null
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(csrfHeader, csrfToken)
+        })
+    })
+</script>
+
+<script type="application/javascript">
+    $(function () {
+        function zoneRequest(url, zoneFullName) {
+            $.ajax({
+                dataType: 'json',
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: 'application/json; charset=utf-8',
+                method: 'post',
+                url: '/settings/zones' + url,
+                data: JSON.stringify({'fullName':zoneFullName})
+            }).done(function (data, status) {
+                console.log('${data} and status is ${status}')
+            })
+        }
+
+        function onAdd(e) {
+            zoneRequest('/add', e.detail.data.value)
+        }
+
+        function  onRemove(e) {
+            zoneRequest('/remove', e.detail.data.value)
+        }
+
+        let zoneInput = document.querySelector('#zones')
+
+        let tagify = new Tagify(zoneInput, {
+            enforceWhitelist: true,
+            whitelist: JSON.parse(document.querySelector("#whiteList").textContent),
+            dropdown: {
+                position: "input",
+                enabled : 1
+            }
+        })
+
+        tagify.on('add', onAdd);
+        tagify.on('remove', onRemove)
+
+        tagify.DOM.input.classList.add('form-control');
+        tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+
+    })
+</script>
+</body>
