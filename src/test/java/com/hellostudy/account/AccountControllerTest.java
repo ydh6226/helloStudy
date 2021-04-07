@@ -1,19 +1,14 @@
 package com.hellostudy.account;
 
 import com.hellostudy.domain.Account;
-import com.hellostudy.settings.SettingController;
-import org.assertj.core.api.Assertions;
+import com.hellostudy.mail.EmailMessage;
+import com.hellostudy.mail.EmailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +37,7 @@ class AccountControllerTest {
     AccountRepository accountRepository;
 
     @MockBean
-    JavaMailSender javaMailSender;
+    EmailService emailService;
 
     @Test
     @DisplayName("회원가입 화면 보이는지 테스트")
@@ -76,7 +71,7 @@ class AccountControllerTest {
         //then
         assertThat(accountRepository.existsByEmail(email)).isTrue();
         assertThat(findAccount.getEmailCheckToken()).isNotNull();
-        then(javaMailSender).should().send(any(SimpleMailMessage.class));
+        then(emailService).should().send(any(EmailMessage.class));
 
         //비밀번호 암호화 확인
         assertThat(findAccount.getPassword()).isNotEqualTo(password);

@@ -1,15 +1,16 @@
 package com.hellostudy.account;
 
 import com.hellostudy.account.form.SignUpForm;
+import com.hellostudy.config.AppProperties;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Tag;
 import com.hellostudy.domain.Zone;
+import com.hellostudy.mail.EmailMessage;
+import com.hellostudy.mail.EmailService;
 import com.hellostudy.settings.form.NotificationsForm;
 import com.hellostudy.settings.form.ProfileForm;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,15 +29,20 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
 
-    private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final TemplateEngine templateEngine;
+
+    private final AppProperties appProperties;
 
     @Transactional
     public Account processNewAccount(SignUpForm form) {
@@ -72,12 +80,22 @@ public class AccountService implements UserDetailsService {
     }
 
     private void sendSignUpConfirmEmail(Account account) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(account.getEmail());
-        mailMessage.setSubject("스터디올래, 회원 가입 인증");
-        mailMessage.setText("/check-email-token?token=" + account.getEmailCheckToken()
+        Context context = new Context();
+        context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken()
                 + "&email=" + account.getEmail());
-        javaMailSender.send(mailMessage);
+        context.setVariable("nickname", account.getNickname());
+        context.setVariable("linkName", "이메일 인증하기");
+        context.setVariable("message", "스터디올래 서비스를 사용하려면 링크를 클릭하세요.");
+        context.setVariable("host", appProperties.getHost());
+        String message = templateEngine.process("mail/simple-link", context);
+
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(account.getEmail())
+                .subject("스터디올래, 회원 가입 인증")
+                .message(message)
+                .build();
+
+        emailService.send(emailMessage);
     }
 
     @Transactional
@@ -140,11 +158,22 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByEmail(email);
         account.generateEmailLoginToken();
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(email);
-        mailMessage.setSubject("스터디 올래, 로그인 링크");
-        mailMessage.setText("/login-by-Email?token=" + account.getEmailLoginToken() + "&email=" + email);
-        javaMailSender.send(mailMessage);
+        Context context = new Context();
+        context.setVariable("link", "/login-by-Email?token=" + account.getEmailLoginToken() + "&email=" + email);
+        context.setVariable("nickname", account.getNickname());
+        context.setVariable("linkName", "이메일로 로그인하기");
+        context.setVariable("message", "로그인 하려면 아래 링크를 클릭하세요.");
+        context.setVariable("host", appProperties.getHost());
+        String message = templateEngine.process("mail/simple-link", context);
+
+
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(email)
+                .subject("스터디 올래, 로그인 링크")
+                .message(message)
+                .build();
+
+        emailService.send(emailMessage);
     }
 
     public Set<Tag> getTags(Account account) {

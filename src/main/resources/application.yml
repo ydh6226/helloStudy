@@ -25,3 +25,5 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+app.host: http://localhost:8080

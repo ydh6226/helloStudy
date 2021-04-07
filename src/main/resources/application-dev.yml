@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/hellostudy
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ydhtube@gmail.com
+    password: smckbmpwillscvmt
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+
+app.host: http://localhost:8080
