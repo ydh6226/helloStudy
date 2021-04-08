@@ -150,6 +150,4 @@ public class AccountController {
         accountService.login(account);
         return view;
     }
-
-
 }
