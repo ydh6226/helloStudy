@@ -107,3 +107,46 @@
         </li>
     </ul>
 </div>
+
+<div th:fragment="settings-menu (currentMenu)" class="list-group">
+    <a th:href="@{'/study/' + ${study.path} +  '/settings/description'}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'description'}  ? active">소개</a>
+    <a th:href="@{'/study/' + ${study.path} +  '/settings/banner'}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'banner'} ? active">배너 이미지</a>
+    <a th:href="@{'/study/' + ${study.path} +  '/settings/tags'}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'} ? active">스터디 주제</a>
+    <a th:href="@{'/study/' + ${study.path} +  '/settings/zones'}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'zones'} ? active">활동 지역</a>
+    <a th:href="@{'/study/' + ${study.path} +  '/settings/study'}" class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'study'} ? active">스터디</a>
+</div>
+
+<!-- Ajax csrf 토큰 필요 -->
+<script th:fragment="summernote-script" type="application/javascript">
+    $(function () {
+        $('#fullDescription').summernote({
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
+            placeholder: '스터디의 목표, 일정, 진행 방식, 사용할 교재 또는 인터넷 강좌 그리고 모집중인 스터디원 등 스터디에 대해 자세히 적어주세요.',
+            tabsize: 2,
+            height:300,
+            callbacks: {
+                onImageUpload: function (files) {
+                    uploadSummernoteImageFile(files[0], this);
+                }
+            }
+        });
+    });
+
+    function uploadSummernoteImageFile(file, editor) {
+        let data = new FormData();
+        data.append("file", file);
+        $.ajax({
+            data: data,
+            type: "POST",
+            url: "/uploadSummernoteImageFile",
+            contentType: false,
+            processData: false,
+            success: function(path) {
+                $(editor).summernote('insertImage', path);
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        })
+    }
+</script>

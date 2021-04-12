@@ -66,6 +66,11 @@ public class Study {
         managers.add(account);
     }
 
+    public void updateDescription(String shortDescription, String fullDescription) {
+        this.shortDescription = shortDescription;
+        this.fullDescription = fullDescription;
+    }
+
     public boolean isMember(UserAccount userAccount) {
         return members.contains(userAccount.getAccount());
     }

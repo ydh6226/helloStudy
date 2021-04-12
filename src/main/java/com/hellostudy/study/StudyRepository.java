@@ -13,4 +13,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     @EntityGraph(attributePaths = {"managers", "members", "tags", "zones"})
     Study findByPath(String path);
+
+    @EntityGraph(attributePaths = {"managers", "members", "tags", "zones", "fullDescription"})
+    Study findStudyWithAllInfoByPath(String path);
 }

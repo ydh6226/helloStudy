@@ -126,4 +126,8 @@ public class Account {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public boolean isManagerOf(Study study) {
+        return study.getManagers().contains(this);
+    }
 }

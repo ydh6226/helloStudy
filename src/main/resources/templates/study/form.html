@@ -75,37 +75,5 @@
     </div>
     <script th:replace="fragments.html::form-validation"></script>
     <script th:replace="fragments.html::ajax-csrfToken"></script>
-    <script type="application/javascript">
-        $(function () {
-            $('#fullDescription').summernote({
-                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
-                placeholder: '스터디의 목표, 일정, 진행 방식, 사용할 교재 또는 인터넷 강좌 그리고 모집중인 스터디원 등 스터디에 대해 자세히 적어주세요.',
-                tabsize: 2,
-                height:300,
-                callbacks: {
-                    onImageUpload: function (files) {
-                        uploadSummernoteImageFile(files[0], this);
-                    }
-                }
-            });
-        });
-
-        function uploadSummernoteImageFile(file, editor) {
-            let data = new FormData();
-            data.append("file", file);
-            $.ajax({
-                data: data,
-                type: "POST",
-                url: "/uploadSummernoteImageFile",
-                contentType: false,
-                processData: false,
-                success: function(path) {
-                    $(editor).summernote('insertImage', path);
-                },
-                error: function (error) {
-                    console.log(error)
-                }
-            })
-        }
-    </script>
+    <script th:replace="fragment/study.html::summernote-script"></script>
 </body>
