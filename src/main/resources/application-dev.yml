@@ -33,3 +33,4 @@ logging:
 
 
 app.host: http://localhost:8080
+app.imageDirectory: C:\Users\user\Desktop\files\

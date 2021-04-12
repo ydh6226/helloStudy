@@ -25,7 +25,7 @@
                            aria-describedby="pathHelp" required minlength="3" maxlength="20">
                     <small id="pathHelp" class="form-text text-muted">
                         공백 없이 문자, 숫자, 대시(-)와 언더바(_)만 2자 이상 20자 이내로 입력하세요.
-                        스터디 홈 주소에 사용합니다. 예) /study<b>study-path</b>
+                        스터디 홈 주소에 사용합니다. 예) /study/<b>study-path</b>
                     </small>
                     <small class="invalid-feedback">스터디 경로를 입력하세요.</small>
                     <small class="form-text text-danger" th:if="${#fields.hasErrors('path')}"
@@ -74,14 +74,38 @@
         <div th:replace="fragments.html::footer"></div>
     </div>
     <script th:replace="fragments.html::form-validation"></script>
+    <script th:replace="fragments.html::ajax-csrfToken"></script>
     <script type="application/javascript">
         $(function () {
             $('#fullDescription').summernote({
                 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
                 placeholder: '스터디의 목표, 일정, 진행 방식, 사용할 교재 또는 인터넷 강좌 그리고 모집중인 스터디원 등 스터디에 대해 자세히 적어주세요.',
                 tabsize: 2,
-                height:300
+                height:300,
+                callbacks: {
+                    onImageUpload: function (files) {
+                        uploadSummernoteImageFile(files[0], this);
+                    }
+                }
             });
         });
+
+        function uploadSummernoteImageFile(file, editor) {
+            let data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: "/uploadSummernoteImageFile",
+                contentType: false,
+                processData: false,
+                success: function(path) {
+                    $(editor).summernote('insertImage', path);
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            })
+        }
     </script>
 </body>

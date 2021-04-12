@@ -16,7 +16,7 @@ public class StudyFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(Study.class);
+        return StudyForm.class.isAssignableFrom(clazz);
     }
 
     @Override

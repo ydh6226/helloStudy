@@ -45,16 +45,7 @@
     </div>
 </div>
 <div th:replace="fragments.html::footer"></div>
-<script type="application/javascript" th:inline="javascript">
-    $(function () {
-        let csrfToken = /*[[${_csrf.token}]]*/ null
-        let csrfHeader = /*[[${_csrf.headerName}]]*/ null
-        $(document).ajaxSend(function (e, xhr, options) {
-            xhr.setRequestHeader(csrfHeader, csrfToken)
-        })
-    })
-</script>
-
+<script th:replace="fragments.html::ajax-csrfToken"></script>
 <script type="application/javascript">
     $(function () {
         function tagRequest(url, tagTitle) {

@@ -1,5 +1,6 @@
 package com.hellostudy.domain;
 
+import com.hellostudy.account.UserAccount;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ public class Study {
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToMany
-    private Set<Tag> zones = new HashSet<>();
+    private Set<Zone> zones = new HashSet<>();
 
     private LocalDateTime publishedDateTime;
 
@@ -63,5 +64,18 @@ public class Study {
 
     public void addManager(Account account) {
         managers.add(account);
+    }
+
+    public boolean isMember(UserAccount userAccount) {
+        return members.contains(userAccount.getAccount());
+    }
+
+    public boolean isManager(UserAccount userAccount) {
+        return managers.contains(userAccount.getAccount());
+    }
+
+    public boolean isJoinable(UserAccount userAccount) {
+        return this.isPublished() && this.isRecruiting()
+                && !isManager(userAccount) && !isMember(userAccount);
     }
 }
