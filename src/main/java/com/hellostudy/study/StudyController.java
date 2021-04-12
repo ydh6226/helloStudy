@@ -1,6 +1,7 @@
 package com.hellostudy.study;
 
 import com.hellostudy.account.CurrentUser;
+import com.hellostudy.config.AppProperties;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Study;
 import com.hellostudy.study.form.StudyForm;
@@ -40,11 +41,7 @@ public class StudyController {
 
     private final StudyFormValidator studyFormValidator;
 
-    @Value("${app.imageDirectory}")
-    private String imagePath;
-
-    @Value("${app.host}")
-    private String host;
+    private final AppProperties appProperties;
 
     @InitBinder("studyForm")
     private void studyFormInitBinder(WebDataBinder webDataBinder) {
@@ -78,10 +75,10 @@ public class StudyController {
         String extension = originalName.substring(multipartFile.getOriginalFilename().lastIndexOf("."));
         String savedName = UUID.randomUUID() + extension;
 
-        File file = new File(imagePath + savedName);
+        File file = new File(appProperties.getImageDirectory() + savedName);
         try {
             multipartFile.transferTo(file);
-            return new ResponseEntity<>(host + "/localImage/" + savedName, HttpStatus.OK);
+            return new ResponseEntity<>(appProperties.getHost() + "/localImage/" + savedName, HttpStatus.OK);
         } catch (IOException e) {
 //            FileUtils.deleteDirectory(file);
             log.error(e.getMessage());
@@ -93,7 +90,7 @@ public class StudyController {
     @GetMapping(value = "/localImage/{name}")
     public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) {
         try {
-            FileInputStream fileInputStream = new FileInputStream(imagePath + name);
+            FileInputStream fileInputStream = new FileInputStream(appProperties.getImageDirectory() + name);
             return new ResponseEntity<>(fileInputStream.readAllBytes(), HttpStatus.OK);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -106,5 +103,12 @@ public class StudyController {
         model.addAttribute(account);
         model.addAttribute(studyRepository.findByPath(path));
         return "study/view";
+    }
+
+    @GetMapping("/study/{path}/members")
+    public String viewMembers(@CurrentUser Account account, @PathVariable("path") String path, Model model) {
+        model.addAttribute(account);
+        model.addAttribute(studyRepository.findByPath(path));
+        return "study/members";
     }
 }

@@ -88,5 +88,22 @@
             <i class="fas fa-cog"></i> 설정
         </a>
     </nav>
+</div>
 
+<div th:fragment="member-list(members, isManager)" class="row justify-content-center container">
+    <ul class="list-unstyled col-10">
+        <li th:each="member: ${members}" class="media mt-2">
+            <svg th:if="${#strings.isEmpty(member?.profileImage)}" class="rounded border bg-light mr-3" data-jdenticon-value="user127"
+                 th:data-jdenticon-value="${#authentication.name}" width="64" height="64"></svg>
+            <img th:if="${!#strings.isEmpty(member?.profileImage)}" th:src="${member.profileImage}"
+                 class="rounded border mr-3" width="64" height="64"/>
+            <div class="media-body">
+                <h5 class="mt-0 mb-1">
+                    <span th:text="${member.nickname}"></span>
+                    <span th:if="${isManager}" class="badge badge-primary">관리자</span>
+                </h5>
+                <span th:text="${member.bio}"></span>
+            </div>
+        </li>
+    </ul>
 </div>
