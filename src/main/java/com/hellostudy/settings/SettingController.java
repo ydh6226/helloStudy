@@ -9,6 +9,7 @@ import com.hellostudy.domain.Tag;
 import com.hellostudy.domain.Zone;
 import com.hellostudy.settings.form.*;
 import com.hellostudy.tag.TagRepository;
+import com.hellostudy.tag.TagService;
 import com.hellostudy.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -54,6 +55,8 @@ public class SettingController {
     private final AccountService accountService;
 
     private final TagRepository tagRepository;
+
+    private final TagService tagService;
 
     private final ZoneRepository zoneRepository;
 
@@ -165,8 +168,7 @@ public class SettingController {
     @PostMapping(SETTINGS_TAGS_URL + "/add")
     public void addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
-        Tag tag = tagRepository.findByTitle(title)
-                .orElseGet(() -> tagRepository.save(new Tag(title)));
+        Tag tag = tagService.findOrCreate(title);
 
         accountService.addTag(account, tag);
     }

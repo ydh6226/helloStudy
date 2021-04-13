@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html::main-nav"></div>
+<!-- 스터디 로고 -->
+<div th:replace="fragment/study.html::study-banner"></div>
+<div class="container">
+    <!-- 스터디 정보 -->
+    <div th:replace="fragment/study.html::study-info"></div>
+
+    <!-- 스터디 메뉴 -->
+    <div th:replace="fragment/study.html::study-menu(currentMenu='members')"></div>
+
+    <!-- 스터디 구성원 괸리자 + 구성원 -->
+    <div th:replace="fragment/study.html::member-list(members=${study.managers}, isManager = ${true})"></div>
+    <div th:replace="fragment/study.html::member-list(members=${study.members}, isManager = ${false})"></div>
+</div>
+<div th:replace="fragments.html::footer"></div>
+</body>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+</html>
