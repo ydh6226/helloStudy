@@ -57,13 +57,13 @@
             <p>
                 <span th:each="tag: ${study.tags}"
                       class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
-                    <a th:href="${'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+                    <a th:href="${'/search/tag/' + tag.title}" class="text-decoration-none text-white">
                         <i class="fas fa-tag"></i><span th:text="${tag.title}">tag</span>
                     </a>
                 </span>
                 <span th:each="zone: ${study.zones}"
                       class="font-weight-light text-monospace badge badge-pill badge-primary mr-3">
-                    <a th:href="${'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+                    <a th:href="${'/search/zone/' + zone.id}" class="text-decoration-none text-white">
                         <i class="fas fa-globe"></i><span th:text="${zone.localNameOfCity}">zone</span>
                     </a>
                 </span>

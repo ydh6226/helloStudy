@@ -33,6 +33,7 @@ public class Study {
     private String fullDescription;
 
     // TODO: 2021-04-08 이미지 파일명만 저장하기
+    @Lob
     private String image;
 
     @ManyToMany
@@ -82,5 +83,29 @@ public class Study {
     public boolean isJoinable(UserAccount userAccount) {
         return this.isPublished() && this.isRecruiting()
                 && !isManager(userAccount) && !isMember(userAccount);
+    }
+
+    public String getImage() {
+        return image != null? image: "/images/default_banner.png";
+    }
+
+    public void EnableStudyBanner() {
+        useBanner = true;
+    }
+
+    public void DisableStudyBanner() {
+        useBanner = false;
+    }
+
+    public void updateBanner(String image) {
+        this.image = image;
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
     }
 }
