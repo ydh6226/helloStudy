@@ -7,10 +7,13 @@ import com.hellostudy.account.CurrentUser;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Study;
 import com.hellostudy.domain.Tag;
+import com.hellostudy.domain.Zone;
 import com.hellostudy.settings.form.TagForm;
+import com.hellostudy.settings.form.ZoneForm;
 import com.hellostudy.study.form.StudyDescriptionForm;
 import com.hellostudy.tag.TagRepository;
 import com.hellostudy.tag.TagService;
+import com.hellostudy.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -44,7 +47,11 @@ public class StudySettingController {
 
     private final TagRepository tagRepository;
 
+    private final ZoneRepository zoneRepository;
+
     private final ObjectMapper objectMapper;
+
+
 
     @GetMapping("/description")
     public String updateDescriptionForm(@CurrentUser Account account, Model model, @PathVariable("path") String path) {
@@ -106,10 +113,6 @@ public class StudySettingController {
         return "redirect:/study/" + encodePath(path) + "/settings/banner";
     }
 
-    private String encodePath(String path) {
-        return URLEncoder.encode(path, StandardCharsets.UTF_8);
-    }
-
     @GetMapping("/tags")
     public String updateZonesForm(@CurrentUser Account account, @PathVariable("path") String path, Model model) throws JsonProcessingException {
         Study study = studyService.getStudyToUpdate(account, path);
@@ -135,7 +138,6 @@ public class StudySettingController {
     public void addTag(@CurrentUser Account account, @PathVariable("path") String path, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
         Tag tag = tagService.findOrCreate(title);
-
         studyService.addTag(account, path, tag);
     }
 
@@ -148,5 +150,63 @@ public class StudySettingController {
         }
         studyService.removeTag(account, path, tag.get());
         return new  ResponseEntity<>(OK);
+    }
+
+    @GetMapping("zones")
+    public String updateZoneForm(@CurrentUser Account account, @PathVariable("path") String path, Model model) throws JsonProcessingException {
+        Study study = studyService.getStudyToUpdate(account, path);
+
+        List<String> zonesOfStudy = study.getZones()
+                .stream()
+                .map(Zone::getFullName)
+                .collect(Collectors.toList());
+
+        List<String> allZonesName = zoneRepository.findAll()
+                .stream()
+                .map(Zone::getFullName)
+                .collect(Collectors.toList());
+
+        model.addAttribute(account);
+        model.addAttribute(study);
+        model.addAttribute("zones", zonesOfStudy);
+        model.addAttribute("whiteList", objectMapper.writeValueAsString(allZonesName));
+
+        return "study/settings/zones";
+    }
+
+    @PostMapping("/zones/add")
+    public ResponseEntity<String> addZone(@CurrentUser Account account, @PathVariable("path") String path,
+                        @Valid @RequestBody ZoneForm zoneForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>("wrong zone name", BAD_REQUEST);
+        }
+
+        Optional<Zone> findZone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (findZone.isEmpty()) {
+            return new ResponseEntity<>("That zone doesn't exist", HttpStatus.BAD_REQUEST);
+        }
+
+        studyService.addZone(account, path, findZone.get());
+        return new ResponseEntity<>(OK);
+    }
+
+    @PostMapping("/zones/remove")
+    public ResponseEntity<String> removeZone(@CurrentUser Account account, @PathVariable("path") String path,
+                                          @Valid @RequestBody ZoneForm zoneForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>("wrong zone name", BAD_REQUEST);
+        }
+
+        Optional<Zone> findZone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (findZone.isEmpty()) {
+            return new ResponseEntity<>("That zone doesn't exist", HttpStatus.BAD_REQUEST);
+        }
+
+        studyService.removeZone(account, path, findZone.get());
+        return new ResponseEntity<>(OK);
+    }
+
+    private String encodePath(String path) {
+        return URLEncoder.encode(path, StandardCharsets.UTF_8);
     }
 }

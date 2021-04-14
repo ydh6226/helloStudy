@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class ZoneForm {
 
-    @Pattern(regexp = "^[a-zA-z]+\\([가-힣]+\\)/[a-zA-z\\s]+$")
+    @Pattern(regexp = "^[a-zA-Z]+\\([가-힣]+\\)/[a-zA-Z\\s]+$")
     String fullName;
 
     public String getCityName() {

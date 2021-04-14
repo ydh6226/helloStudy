@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<script th:fragment="update-zone(baseUrl)" type="application/javascript" th:inline="javascript">
+    $(function () {
+        function zoneRequest(url, zoneFullName) {
+            $.ajax({
+                dataType: 'json',
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: 'application/json; charset=utf-8',
+                method: 'post',
+                url: [[${baseUrl}]] + url,
+                data: JSON.stringify({'fullName':zoneFullName})
+            }).done(function (data, status) {
+                console.log('${data} and status is ${status}')
+            })
+        }
+
+        function onAdd(e) {
+            zoneRequest('/add', e.detail.data.value)
+        }
+
+        function  onRemove(e) {
+            zoneRequest('/remove', e.detail.data.value)
+        }
+
+        let zoneInput = document.querySelector('#zones')
+
+        let tagify = new Tagify(zoneInput, {
+            enforceWhitelist: true,
+            whitelist: JSON.parse(document.querySelector("#whiteList").textContent),
+            dropdown: {
+                position: "input",
+                enabled : 1
+            },
+            backspace : "null"
+        })
+
+        tagify.on('add', onAdd);
+        tagify.on('remove', onRemove)
+
+        tagify.DOM.input.classList.add('form-control');
+        tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+
+    })
+</script>
+</html>

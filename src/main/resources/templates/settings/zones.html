@@ -12,7 +12,6 @@
             border: 0;
         }
     </style>
-
 </head>
 <body class="bg-light">
 
@@ -46,49 +45,5 @@
 </div>
 <div th:replace="fragments.html::footer"></div>
 <script th:replace="fragments.html::ajax-csrfToken"></script>
-<script type="application/javascript">
-    $(function () {
-        function zoneRequest(url, zoneFullName) {
-            $.ajax({
-                dataType: 'json',
-                autocomplete: {
-                    enabled: true,
-                    rightKey: true,
-                },
-                contentType: 'application/json; charset=utf-8',
-                method: 'post',
-                url: '/settings/zones' + url,
-                data: JSON.stringify({'fullName':zoneFullName})
-            }).done(function (data, status) {
-                console.log('${data} and status is ${status}')
-            })
-        }
-
-        function onAdd(e) {
-            zoneRequest('/add', e.detail.data.value)
-        }
-
-        function  onRemove(e) {
-            zoneRequest('/remove', e.detail.data.value)
-        }
-
-        let zoneInput = document.querySelector('#zones')
-
-        let tagify = new Tagify(zoneInput, {
-            enforceWhitelist: true,
-            whitelist: JSON.parse(document.querySelector("#whiteList").textContent),
-            dropdown: {
-                position: "input",
-                enabled : 1
-            }
-        })
-
-        tagify.on('add', onAdd);
-        tagify.on('remove', onRemove)
-
-        tagify.DOM.input.classList.add('form-control');
-        tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
-
-    })
-</script>
+<script th:replace="fragment/zones.html::update-zone(baseUrl='/settings/zones')"></script>
 </body>

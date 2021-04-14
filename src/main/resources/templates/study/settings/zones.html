@@ -27,18 +27,18 @@
 
     <div class="row justify-content-center mt-2">
         <div class="col-2">
-            <div th:replace="fragment/study.html::settings-menu (currentMenu='tags')"></div>
+            <div th:replace="fragment/study.html::settings-menu (currentMenu='zones')"></div>
         </div>
         <div class="col-8">
             <h3>스터디 주제</h3>
             <div class="row">
                 <div class="col">
                     <div class="alert alert-info" role="alert">
-                        스터디에서 주로 다루는 주제를 태그로 등록하세요.
-                        태그를 입력하고 콤마(,)나 엔터를 입력하세요.
+                        주로 스터디를 하는 지역을 등록하세요.
+                        스터디올래에 등록된 지역만 선텍할 수 있습니다.
                     </div>
-                    <input id="tags" type="text" name="tags" class="tagify--outside"
-                           th:value="${#strings.listJoin(tags, ',')}" aria-describedby="tagsHelp">
+                    <input id="zones" type="text" name="tags" class="tagify--outside"
+                           th:value="${#strings.listJoin(zones, ',')}" aria-describedby="tagsHelp">
                     <div id="whiteList" th:text="${whiteList}" hidden=""></div>
                 </div>
             </div>
@@ -49,5 +49,5 @@
 </body>
 <script th:replace="fragments.html::form-validation"></script>
 <script th:replace="fragments.html::ajax-csrfToken"></script>
-<script th:replace="fragment/tags.html::update-tag(baseUrl='/study/' + ${study.path} + '/settings/tags')"></script>
+<script th:replace="fragment/zones.html::update-zone(baseUrl='/study/' + ${study.path} + '/settings/zones')"></script>
 </html>

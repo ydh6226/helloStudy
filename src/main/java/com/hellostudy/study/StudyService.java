@@ -3,70 +3,75 @@ package com.hellostudy.study;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Study;
 import com.hellostudy.domain.Tag;
+import com.hellostudy.domain.Zone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class StudyService {
 
     private final StudyRepository studyRepository;
 
-    @Transactional
     public Study createNewStudy(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
         newStudy.addManager(account);
         return newStudy;
     }
 
+    @Transactional(readOnly = true)
     public Study getStudyToUpdate(Account account, String path) {
         return studyVerification(studyRepository.findByPath(path), account, path);
     }
 
+    @Transactional(readOnly = true)
     public Study getStudyToUpdateDescription(Account account, String path) {
         return studyVerification(studyRepository.findStudyWithAllInfoByPath(path), account, path);
     }
 
-    public Study getStudyToUpdateTag(Account account, String path) {
-        return studyVerification(studyRepository.findStudyWithTagsAndManagersByPath(path), account, path);
-    }
-
+    @Transactional(readOnly = true)
     public Study getStudy(String path) {
         return studyRepository.findByPath(path);
     }
 
-    @Transactional
     public void updateDescription(String path, String shortDescription, String fullDescription) {
         Study study = studyRepository.findStudyWithDescriptionByPath(path);
         study.updateDescription(shortDescription, fullDescription);
     }
 
-    @Transactional
     public void EnableStudyBanner(Study study) {
         study.EnableStudyBanner();
     }
 
-    @Transactional
     public void DisableStudyBanner(Study study) {
         study.DisableStudyBanner();
     }
 
-    @Transactional
     public void addTag(Account account, String path, Tag tag) {
         Study study = studyVerification(studyRepository.findStudyWithTagsAndManagersByPath(path), account, path);
         study.addTag(tag);
     }
 
-    @Transactional
     public void removeTag(Account account, String path, Tag tag) {
         Study study = studyVerification(studyRepository.findStudyWithTagsAndManagersByPath(path), account, path);
         study.removeTag(tag);
     }
 
-    @Transactional
+    public void addZone(Account account, String path, Zone zone) {
+        Study study = studyVerification(studyRepository.findByPath(path), account, path);
+        study.addZone(zone);
+    }
+
+    public void removeZone(Account account, String path, Zone zone) {
+        Study study = studyVerification(studyRepository.findByPath(path), account, path);
+        study.removeZone(zone);
+    }
+
     public void updateBanner(Study study, String image) {
         study.updateBanner(image);
     }
@@ -84,9 +89,8 @@ public class StudyService {
     }
 
     private Study studyVerification(Study study, Account account, String path) {
-        isManagerOfStudy(account, study);
         isExistingStudy(study, path);
+        isManagerOfStudy(account, study);
         return study;
     }
-
 }

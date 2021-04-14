@@ -108,4 +108,13 @@ public class Study {
     public void removeTag(Tag tag) {
         tags.remove(tag);
     }
+
+    public void addZone(Zone zone) {
+        zones.add(zone);
+    }
+
+    public void removeZone(Zone zone) {
+        zones.remove(zone);
+    }
+
 }
