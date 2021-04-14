@@ -47,6 +47,11 @@
 </div>
 <div th:replace="fragments.html::footer"></div>
 </body>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
 <script th:replace="fragments.html::form-validation"></script>
 <script th:replace="fragments.html::ajax-csrfToken"></script>
 <script th:replace="fragment/zones.html::update-zone(baseUrl='/study/' + ${study.path} + '/settings/zones')"></script>
