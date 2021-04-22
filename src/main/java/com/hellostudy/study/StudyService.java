@@ -9,8 +9,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,6 +30,11 @@ public class StudyService {
     @Transactional(readOnly = true)
     public Study getStudyToUpdateDescription(Account account, String path) {
         return studyVerification(studyRepository.findStudyWithAllInfoByPath(path), account, path);
+    }
+
+    @Transactional(readOnly = true)
+    public Study getStudyWithoutFetch(Account account, String path) {
+        return studyVerification(studyRepository.findStudyWithoutFetchByPath(path), account, path);
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +77,22 @@ public class StudyService {
 
     public void updateBanner(Study study, String image) {
         study.updateBanner(image);
+    }
+
+    public void publish(Study study) {
+        study.publish();
+    }
+
+    public void close(Study study) {
+        study.close();
+    }
+
+    public void startRecruit(Study study) {
+        study.startRecruit();
+    }
+
+    public void stopRecruit(Study study) {
+        study.stopRecruit();
     }
 
     private void isManagerOfStudy(Account account, Study study) {

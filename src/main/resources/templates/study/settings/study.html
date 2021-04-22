@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:include="fragments.html::head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html::main-nav"></div>
+<!-- 스터디 로고 -->
+<div th:replace="fragment/study.html::study-banner"></div>
+
+<div class="container">
+    <!-- 스터디 정보 -->
+    <div th:replace="fragment/study.html::study-info"></div>
+
+    <!-- 스터디 메뉴 -->
+    <div th:replace="fragment/study.html::study-menu(currentMenu='settings')"></div>
+
+    <div class="row justify-content-center mt-2">
+        <div class="col-2">
+            <div th:replace="fragment/study.html::settings-menu (currentMenu='study')"></div>
+        </div>
+        <div class="col-8">
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show col-12" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div th:if="${message}" class="alert alert-success alert-dismissible fade show col-12" role="alert">
+                <span th:text="${message}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <hr th:if="${!#strings.isEmpty(error) || !#strings.isEmpty(message)}">
+
+            <!-- 스터디 공개 및 종료 -->
+            <div class="row">
+                <h3 class="col-12">스터디 공개 및 종료</h3>
+                <form th:if="${!study.published}" th:action="@{'/study/' + ${path} + '/settings/study/publish'}" method="post" class="col-12">
+                    <div class="alert alert-primary form-group col-12" role="alert">
+                        스터디를 다른 사용자에게 공개할 준비가 되었다면 버튼을 클릭하세요.<br>
+                        소개, 배너 이미지, 스터디 주제 및 활동지역을 등록했는지 확인하세요.<br>
+                        스터디를 공개하면 주요 활동 지역과 스터디 주제에 관심있는 다른 사람들에게 알림을 전송합니다.<br>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-primary">스터디 공개</button>
+                    </div>
+                    <hr>
+                </form>
+                <form th:if="${study.published && !study.closed}" th:action="@{'/study/' + ${path} + '/settings/study/close'}" method="post" class="col-12">
+                    <div class="alert alert-warning form-group col-12" role="alert">
+                        스터디 활동을 마쳤다면 스터디를 종료하세요.<br>
+                        스터디를 종료하면 더 이상 팀원을 모집하거나 모임을 만들 수 없으며, 스터디 경로와 이름을 수정할 수 없습니다.<br>
+                        스터디 모임과 참여한 팀원의 기록은 그대로 보관합니다.<br>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-primary">스터디 종료</button>
+                    </div>
+                    <hr>
+                </form>
+                <div th:if="${study.closed}" class="col-12">
+                    <div class="alert alert-primary form-group col-12" role="alert">
+                        이 스터디는 <span th:text="${#temporals.format(study.closedDateTime, 'yyyy-MM-dd HH:mm')}"></span> 에 종료됐습니다.<br>
+                        다시 스터디를 진행하고 싶다면 새로운 스터디를 만드세요.<br>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <!-- 스터디원 모집 -->
+            <div class="row" th:if="${study.published && !study.closed}">
+                <form th:if="${!study.recruiting}" th:action="@{'/study/' + ${path} + '/settings/study/startRecruiting'}" method="post" class="col-12">
+                    <div class="alert alert-primary form-group col-12" role="alert">
+                        팀원을 모집합니다.<br>
+                        충분한 스터디 정원을 모집했다면 멈출 수 있습니다.<br>
+                        팀원 모집 정보는 3시간에 한번만 바꿀 수 있습니다.<br>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-primary">팀원 모집 시작</button>
+                    </div>
+                    <hr>
+                </form>
+
+                <form th:if="${study.recruiting}" th:action="@{'/study/' + ${path} + '/settings/study/stopRecruiting'}" method="post" class="col-12">
+                    <div class="alert alert-primary form-group col-12" role="alert">
+                        팀원 모집을 중단합니다.<br>
+                        팀원 충원이 필요할 때 다시 팀원 모집을 시작할 수 있습니다.<br>
+                        팀원 모집 정보는 3시간에 한번만 바꿀 수 있습니다.<br>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-primary">팀원 모집 종료</button>
+                    </div>
+                    <hr>
+                </form>
+            </div>
+
+
+            <!-- 스터디 경로 수정 -->
+            <div class="row" th:if="${!study.closed}">
+                <h3 class="col-12">스터디 경로</h3>
+                <form action="#" class="needs-validation col-12" novalidate>
+                    <div class="alert alert-warning form-group col-12" role="alert">
+                        스터디 경로를 수정하면 이전에 사용하던 경로로 스터디에 접근할 수 없으니 주의하세요.
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="path" name="path" class="form-control" aria-describedby="pathHelp"
+                        pattern="^[ㄱ-ㅎ가-힣a-z0-9_-]{2,20}$" placeholder="예) /study/study-path" required>
+                        <small id="passwordHelp" class="form-text text-muted">
+                            공백 없이 문자, 숫자, 대시(-)와 언더바(_)만 2자 이상 20자 이내로 입력하세요.
+                            스터디 홈 주소에 사용합니다. 예) /study/<b>study-path</b>
+                        </small>
+                        <div class="invalid-feedback">
+                            형식에 맞게 입력하세요.
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-warning">경로 수정</button>
+                    </div>
+                </form>
+                <hr>
+            </div>
+
+            <!-- 스터디 이름 수정 -->
+            <div class="row">
+
+                <hr>
+            </div>
+
+            <!-- 스터디 삭제 -->
+            <div class="row">
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments.html::footer"></div>
+</body>
+<script th:replace="fragment/study.html::tooltip"></script>
+<script th:replace="fragments.html::form-validation"></script>
+</html>

@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface StudyRepository extends JpaRepository<Study, Long> {
     boolean existsByPath(String path);
 
+    Study findStudyWithoutFetchByPath(String path);
+
     @EntityGraph(attributePaths = {"managers", "members", "tags", "zones"})
     Study findByPath(String path);
 

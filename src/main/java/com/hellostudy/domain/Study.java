@@ -117,4 +117,30 @@ public class Study {
         zones.remove(zone);
     }
 
+    public void publish() {
+        published = true;
+        publishedDateTime = LocalDateTime.now();
+    }
+
+    public void close() {
+        closed = true;
+        closedDateTime = LocalDateTime.now();
+    }
+
+    public boolean canUpdateRecruitingStatus() {
+        if (recruitingUpdatedDateTime == null) {
+            return true;
+        }
+        return recruitingUpdatedDateTime.isBefore(LocalDateTime.now().minusHours(3));
+    }
+
+    public void startRecruit() {
+        recruiting = true;
+        recruitingUpdatedDateTime = LocalDateTime.now();
+    }
+
+    public void stopRecruit() {
+        recruiting = false;
+        recruitingUpdatedDateTime = LocalDateTime.now();
+    }
 }

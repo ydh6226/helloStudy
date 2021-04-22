@@ -2,7 +2,6 @@ package com.hellostudy.study;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hellostudy.account.AccountService;
 import com.hellostudy.account.CurrentUser;
 import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Study;
@@ -29,7 +28,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -52,6 +50,7 @@ public class StudySettingController {
     private final ObjectMapper objectMapper;
 
 
+    private static final String BASE_REDIRECT_URL = "redirect:/study/%s/settings";
 
     @GetMapping("/description")
     public String updateDescriptionForm(@CurrentUser Account account, Model model, @PathVariable("path") String path) {
@@ -79,6 +78,8 @@ public class StudySettingController {
                 studyDescriptionForm.getFullDescription());
 
         attributes.addFlashAttribute("message", "변경을 완료했습니다.");
+
+        // TODO: 2021-04-15 getRedirectUrl()사용하기
         return "redirect:/study/" + encodePath(path) + "/settings/description";
     }
 
@@ -206,7 +207,106 @@ public class StudySettingController {
         return new ResponseEntity<>(OK);
     }
 
+    @GetMapping("/study")
+    public String updateStudyForm(@CurrentUser Account account, Model model, @PathVariable("path") String path) {
+        Study study = studyService.getStudyToUpdate(account, path);
+
+        model.addAttribute(account);
+        model.addAttribute(study);
+        return "study/settings/study";
+    }
+
+    @PostMapping("/study/publish")
+    public String publishStudy(@CurrentUser Account account, Model model,
+                               @PathVariable("path") String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyWithoutFetch(account, path);
+        if (study.isPublished()) {
+            model.addAttribute(account);
+            model.addAttribute(studyService.getStudyToUpdate(account, path));
+            model.addAttribute("error", "이미 공개된 스터디입니다");
+            return "study/settings/study";
+        }
+
+        studyService.publish(study);
+        attributes.addFlashAttribute("message", "스터디를 공개했습니다");
+        return getRedirectUrl("/study", path);
+    }
+
+    @PostMapping("/study/close")
+    public String closeStudy(@CurrentUser Account account, Model model,
+                               @PathVariable("path") String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyWithoutFetch(account, path);
+        if (!isStudyPublishing(account, model, path, study)) {
+            return "study/settings/study";
+        }
+
+        studyService.close(study);
+        attributes.addFlashAttribute("message", "스터디를 종료했습니다.");
+        return getRedirectUrl("/study", path);
+    }
+
+    @PostMapping("/study/startRecruiting")
+    public String startRecruiting(@CurrentUser Account account, Model model,
+                             @PathVariable("path") String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyWithoutFetch(account, path);
+        if (!canUpdateRecruitingStatus(account, model, path, study)) {
+            return "study/settings/study";
+        }
+
+        studyService.startRecruit(study);
+        attributes.addFlashAttribute("message", "팀원 모집을 시작합니다.");
+        return getRedirectUrl("/study", path);
+    }
+
+    @PostMapping("/study/stopRecruiting")
+    public String stopRecruiting(@CurrentUser Account account, Model model,
+                                  @PathVariable("path") String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyWithoutFetch(account, path);
+        if (!canUpdateRecruitingStatus(account, model, path, study)) {
+            return "study/settings/study";
+        }
+
+        studyService.stopRecruit(study);
+        attributes.addFlashAttribute("message", "팀원 모집을 종료합니다.");
+        return getRedirectUrl("/study", path);
+    }
+
+
+    private boolean isStudyPublishing(Account account, Model model, String path, Study study) {
+        if (!(study.isPublished() && !study.isClosed())) {
+            model.addAttribute(account);
+            model.addAttribute(studyService.getStudyToUpdate(account, path));
+            model.addAttribute("error", "올바르지 않은 요청입니다.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean canUpdateRecruitingStatus(Account account, Model model, String path, Study study) {
+        if (!isStudyPublishing(account, model, path, study)) {
+            return false;
+        }
+
+        if (!study.canUpdateRecruitingStatus()) {
+            model.addAttribute(account);
+            model.addAttribute(studyService.getStudyToUpdate(account, path));
+            model.addAttribute("message", "스터디 모집 변경은 3시간에 한번만 가능합니다.");
+            return false;
+        }
+        return true;
+    }
+
     private String encodePath(String path) {
         return URLEncoder.encode(path, StandardCharsets.UTF_8);
     }
+
+    /**
+     *
+     * @param url BASE_REDIRECT_URL다음에 위치할 요청 url ex) /study
+     * @param path 스터디 경로
+     */
+    private String getRedirectUrl(String url, String path) {
+        return String.format(BASE_REDIRECT_URL + url ,encodePath(path));
+    }
+
 }
