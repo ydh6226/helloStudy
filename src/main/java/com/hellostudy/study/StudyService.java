@@ -112,4 +112,20 @@ public class StudyService {
         isManagerOfStudy(account, study);
         return study;
     }
+
+    public void updateTitle(Study study, String title) {
+        study.updateTitle(title);
+    }
+
+    public void updatePath(Study study, String path) {
+        study.updatePath(path);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isValidPath(String newPath) {
+        if (!newPath.matches("^[ㄱ-ㅎ가-힣a-z0-9_-]{2,20}$")){
+            return false;
+        }
+        return !studyRepository.existsByPath(newPath);
+    }
 }

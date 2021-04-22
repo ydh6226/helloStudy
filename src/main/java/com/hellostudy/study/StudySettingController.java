@@ -10,6 +10,8 @@ import com.hellostudy.domain.Zone;
 import com.hellostudy.settings.form.TagForm;
 import com.hellostudy.settings.form.ZoneForm;
 import com.hellostudy.study.form.StudyDescriptionForm;
+import com.hellostudy.study.form.StudyTitleForm;
+import com.hellostudy.study.validator.StudyFormValidator;
 import com.hellostudy.tag.TagRepository;
 import com.hellostudy.tag.TagService;
 import com.hellostudy.zone.ZoneRepository;
@@ -20,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -48,7 +51,6 @@ public class StudySettingController {
     private final ZoneRepository zoneRepository;
 
     private final ObjectMapper objectMapper;
-
 
     private static final String BASE_REDIRECT_URL = "redirect:/study/%s/settings";
 
@@ -268,6 +270,39 @@ public class StudySettingController {
 
         studyService.stopRecruit(study);
         attributes.addFlashAttribute("message", "팀원 모집을 종료합니다.");
+        return getRedirectUrl("/study", path);
+    }
+
+    @PostMapping("/study/updatePath")
+    public String updatePath(@CurrentUser Account account, Model model,
+                             @PathVariable("path") String path, RedirectAttributes attributes,
+                             String newPath) {
+        if (!studyService.isValidPath(newPath)) {
+            model.addAttribute(account);
+            model.addAttribute(studyService.getStudyToUpdate(account, path));
+            model.addAttribute("studyPathError", "이 스터디 경로는 사용할 수 없습니다.");
+            return "study/settings/study";
+        }
+
+        Study study = studyService.getStudyWithoutFetch(account, path);
+        studyService.updatePath(study, newPath);
+        attributes.addFlashAttribute("message", "스터디 경로를 변경했습니다.");
+        return getRedirectUrl("/study", path);
+    }
+
+    @PostMapping("/study/updateTitle")
+    public String updateTitle(@CurrentUser Account account, Model model,
+                              @PathVariable("path") String path, RedirectAttributes attributes,
+                              StudyTitleForm studyTitleForm, BindingResult result) {
+        if (result.hasErrors()) {
+            model.addAttribute(account);
+            model.addAttribute(studyService.getStudyToUpdate(account, path));
+            return "study/settings/study";
+        }
+
+        Study study = studyService.getStudyWithoutFetch(account, path);
+        studyService.updateTitle(study, studyTitleForm.getTitle());
+        attributes.addFlashAttribute("message", "스터디 이름을 변경했습니다.");
         return getRedirectUrl("/study", path);
     }
 

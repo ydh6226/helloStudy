@@ -98,12 +98,12 @@
             <!-- 스터디 경로 수정 -->
             <div class="row" th:if="${!study.closed}">
                 <h3 class="col-12">스터디 경로</h3>
-                <form action="#" class="needs-validation col-12" novalidate>
+                <form th:action="@{'/study/' + ${path} + '/settings/study/updatePath'}" class="needs-validation col-12" method="post" novalidate>
                     <div class="alert alert-warning form-group col-12" role="alert">
                         스터디 경로를 수정하면 이전에 사용하던 경로로 스터디에 접근할 수 없으니 주의하세요.
                     </div>
                     <div class="form-group">
-                        <input type="text" id="path" name="path" class="form-control" aria-describedby="pathHelp"
+                        <input type="text" id="newPath" name="newPath" th:value="${study.path}" class="form-control" aria-describedby="pathHelp"
                         pattern="^[ㄱ-ㅎ가-힣a-z0-9_-]{2,20}$" placeholder="예) /study/study-path" required>
                         <small id="passwordHelp" class="form-text text-muted">
                             공백 없이 문자, 숫자, 대시(-)와 언더바(_)만 2자 이상 20자 이내로 입력하세요.
@@ -112,6 +112,7 @@
                         <div class="invalid-feedback">
                             형식에 맞게 입력하세요.
                         </div>
+                        <small class="form-text text-danger" th:if="${studyPathError}" th:text="${studyPathError}"></small>
                     </div>
                     <div class="form-group text-center">
                         <button type="submit" class="btn btn-outline-warning">경로 수정</button>
@@ -122,7 +123,25 @@
 
             <!-- 스터디 이름 수정 -->
             <div class="row">
-
+                <h3 class="col-12">스터디 이름</h3>
+                <form th:action="@{'/study/' + ${path} + '/settings/study/updateTitle'}" class="needs-validation col-12" method="post"  novalidate>
+                    <div class="alert alert-warning form-group col-12" role="alert">
+                        스터디 이름을 수정합니다.
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="title" name="title" th:value="${study.title}" class="form-control" aria-describedby="titleHelp"
+                               placeholder="예) 스프링 공부합시다." maxlength="50" required>
+                        <small id="titleHelp" class="form-text text-muted">
+                            스터디 이름을 50자 이내로 입력하세요,
+                        </small>
+                        <div class="invalid-feedback">
+                            형식에 맞게 입력하세요.
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-warning">이름 변경</button>
+                    </div>
+                </form>
                 <hr>
             </div>
 

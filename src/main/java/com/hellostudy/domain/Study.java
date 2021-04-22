@@ -143,4 +143,12 @@ public class Study {
         recruiting = false;
         recruitingUpdatedDateTime = LocalDateTime.now();
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updatePath(String path) {
+        this.path = path;
+    }
 }
