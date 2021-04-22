@@ -39,7 +39,16 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public Study getStudy(String path) {
-        return studyRepository.findByPath(path);
+        Study study = studyRepository.findByPath(path);
+        isExistingStudy(study, path);
+        return study;
+    }
+
+    @Transactional(readOnly = true)
+    public Study getStudyWithMember(String path) {
+        Study study = studyRepository.findStudyWithMembersByPath(path);
+        isExistingStudy(study, path);
+        return study;
     }
 
     public void updateDescription(String path, String shortDescription, String fullDescription) {
@@ -134,5 +143,13 @@ public class StudyService {
             throw new RuntimeException("모집을 했던 스터디는 삭제할 수 없습니다.");
         }
         studyRepository.delete(study);
+    }
+
+    public void join(Account account, Study study) {
+        study.addMember(account);
+    }
+
+    public void leave(Account account, Study study) {
+        study.deleteMember(account);
     }
 }

@@ -315,7 +315,6 @@ public class StudySettingController {
         return "redirect:/";
     }
 
-
     private boolean isStudyPublishing(Account account, Model model, String path, Study study) {
         if (!(study.isPublished() && !study.isClosed())) {
             model.addAttribute(account);
@@ -340,10 +339,6 @@ public class StudySettingController {
         return true;
     }
 
-    private String encodePath(String path) {
-        return URLEncoder.encode(path, StandardCharsets.UTF_8);
-    }
-
     /**
      *
      * @param url BASE_REDIRECT_URL다음에 위치할 요청 url ex) /study
@@ -353,4 +348,7 @@ public class StudySettingController {
         return String.format(BASE_REDIRECT_URL + url ,encodePath(path));
     }
 
+    private String encodePath(String path) {
+        return URLEncoder.encode(path, StandardCharsets.UTF_8);
+    }
 }

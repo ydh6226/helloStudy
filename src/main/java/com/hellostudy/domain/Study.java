@@ -4,6 +4,8 @@ import com.hellostudy.account.UserAccount;
 import lombok.*;
 
 import javax.persistence.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -154,5 +156,17 @@ public class Study {
 
     public boolean isRemovable() {
         return !published;
+    }
+
+    public void addMember(Account account) {
+        if (!members.add(account)) {
+            throw new IllegalStateException("이미 가입한 스터디 입니다.");
+        }
+    }
+
+    public void deleteMember(Account account) {
+        if (!members.remove(account)) {
+            throw new IllegalStateException("가입하지 않은 스터디 입니다.");
+        }
     }
 }
