@@ -307,8 +307,7 @@ public class StudySettingController {
     }
 
     @PostMapping("/study/delete")
-    public String deleteStudy(@CurrentUser Account account, Model model,
-                              @PathVariable("path") String path, RedirectAttributes attributes) {
+    public String deleteStudy(@CurrentUser Account account, @PathVariable("path") String path) {
         Study study = studyService.getStudyWithoutFetch(account, path);
 
         studyService.deleteStudy(study);
