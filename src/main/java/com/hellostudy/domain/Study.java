@@ -4,6 +4,8 @@ import com.hellostudy.account.UserAccount;
 import lombok.*;
 
 import javax.persistence.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -107,5 +109,64 @@ public class Study {
 
     public void removeTag(Tag tag) {
         tags.remove(tag);
+    }
+
+    public void addZone(Zone zone) {
+        zones.add(zone);
+    }
+
+    public void removeZone(Zone zone) {
+        zones.remove(zone);
+    }
+
+    public void publish() {
+        published = true;
+        publishedDateTime = LocalDateTime.now();
+    }
+
+    public void close() {
+        closed = true;
+        closedDateTime = LocalDateTime.now();
+    }
+
+    public boolean canUpdateRecruitingStatus() {
+        if (recruitingUpdatedDateTime == null) {
+            return true;
+        }
+        return recruitingUpdatedDateTime.isBefore(LocalDateTime.now().minusHours(3));
+    }
+
+    public void startRecruit() {
+        recruiting = true;
+        recruitingUpdatedDateTime = LocalDateTime.now();
+    }
+
+    public void stopRecruit() {
+        recruiting = false;
+        recruitingUpdatedDateTime = LocalDateTime.now();
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updatePath(String path) {
+        this.path = path;
+    }
+
+    public boolean isRemovable() {
+        return !published;
+    }
+
+    public void addMember(Account account) {
+        if (!members.add(account)) {
+            throw new IllegalStateException("이미 가입한 스터디 입니다.");
+        }
+    }
+
+    public void deleteMember(Account account) {
+        if (!members.remove(account)) {
+            throw new IllegalStateException("가입하지 않은 스터디 입니다.");
+        }
     }
 }

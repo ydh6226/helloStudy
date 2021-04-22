@@ -14,36 +14,45 @@
     </style>
 </head>
 <body class="bg-light">
-
 <div th:replace="fragments.html::main-nav"></div>
+<!-- 스터디 로고 -->
+<div th:replace="fragment/study.html::study-banner"></div>
 
 <div class="container">
-    <div class="row justify-content-center mt-5">
+    <!-- 스터디 정보 -->
+    <div th:replace="fragment/study.html::study-info"></div>
+
+    <!-- 스터디 메뉴 -->
+    <div th:replace="fragment/study.html::study-menu(currentMenu='settings')"></div>
+
+    <div class="row justify-content-center mt-2">
         <div class="col-2">
-            <div th:replace="fragments.html::settings-menu ('zones')"></div>
+            <div th:replace="fragment/study.html::settings-menu (currentMenu='zones')"></div>
         </div>
         <div class="col-8">
-            <div class="row mt-3">
-                <div class="row">
-                    <h2 class="col">주요 활동 지역</h2>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="alert alert-info" role="alert">
-                            주로 스터디를 다닐 수 있는 지역을 등록하세요. 해당 지역에 스터디가 생기면 알림을 받을 수 있습니다.
-                            스터디올래에 등록된 지역만 선택할 수 있습니다.
-                        </div>
-                        <input id="zones" type="text" name="zones" class="tagify--outside"
-                               th:value="${#strings.listJoin(zones, ',')}" aria-describedby="zonesHelp">
-                        <div id="whiteList" th:text="${whiteList}" hidden=""></div>
+            <h3>스터디 주제</h3>
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-info" role="alert">
+                        주로 스터디를 하는 지역을 등록하세요.
+                        스터디올래에 등록된 지역만 선텍할 수 있습니다.
                     </div>
+                    <input id="zones" type="text" name="tags" class="tagify--outside"
+                           th:value="${#strings.listJoin(zones, ',')}" aria-describedby="tagsHelp">
+                    <div id="whiteList" th:text="${whiteList}" hidden=""></div>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
 <div th:replace="fragments.html::footer"></div>
-<script th:replace="fragments.html::ajax-csrfToken"></script>
-<script th:replace="fragment/zones.html::update-zone(baseUrl='/settings/zones')"></script>
 </body>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<script th:replace="fragments.html::form-validation"></script>
+<script th:replace="fragments.html::ajax-csrfToken"></script>
+<script th:replace="fragment/zones.html::update-zone(baseUrl='/study/' + ${study.path} + '/settings/zones')"></script>
+</html>

@@ -3,10 +3,6 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:include="fragments.html::head"></head>
 <head>
-    <!-- Summernote -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.0/tagify.min.css" integrity="sha512-UZcJ2LgifDD+cGLeNAPay6av2WFnNk/0HnmOnMoib7FujOV1CuQygHjvOFAwvx4u04CF0o1yGgyH1xRr3XvCKA==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.0/jQuery.tagify.min.js" integrity="sha512-uo3YEvOn+6fD2GRFliFMDNaI2fxuMkjzf42ThL7IZovwkOW6a5jWDVjWx+uczOiTt3ZlJRWT1vuqbjx3AHwiPw==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.0/tagify.min.js" integrity="sha512-cgnDkuTNBjsM27giWgYIQZv4cGvbwttJpS3ADNxNLRjzKvUwRCoQlJYJzkfpzP20rJh2ChZo+5GQPtRhHzXHfQ==" crossorigin="anonymous"></script>
@@ -27,11 +23,11 @@
     <div th:replace="fragment/study.html::study-info"></div>
 
     <!-- 스터디 메뉴 -->
-    <div th:replace="fragment/study.html::study-menu(currentMenu='tags')"></div>
+    <div th:replace="fragment/study.html::study-menu(currentMenu='settings')"></div>
 
     <div class="row justify-content-center mt-2">
         <div class="col-2">
-            <div th:replace="fragment/study.html::settings-menu (currentMenu='description')"></div>
+            <div th:replace="fragment/study.html::settings-menu (currentMenu='tags')"></div>
         </div>
         <div class="col-8">
             <h3>스터디 주제</h3>
@@ -51,6 +47,7 @@
 </div>
 <div th:replace="fragments.html::footer"></div>
 </body>
+<script th:replace="fragment/study.html::tooltip"></script>
 <script th:replace="fragments.html::form-validation"></script>
 <script th:replace="fragments.html::ajax-csrfToken"></script>
 <script th:replace="fragment/tags.html::update-tag(baseUrl='/study/' + ${study.path} + '/settings/tags')"></script>

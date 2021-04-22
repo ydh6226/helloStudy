@@ -2,10 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
+<!-- 스터디 배너 -->
 <div th:fragment="study-banner" th:if="${study.useBanner}" class="row" id="study-logo">
     <img th:src="${study.image}"/>
 </div>
 
+<!-- 스터디 정보 -->
 <div th:fragment="study-info">
     <div class="row pt-4 text-left justify-content-center bg-light">
         <div class="col-6">
@@ -14,12 +16,12 @@
             </a>
         </div>
         <div class="col-4 text-right justify-content-end">
-            <span th:if="${!study.published}" class="d-inline-block" tabindex="0" data-toggle="tooltip"
+            <span th:if="${study.published}" class="d-inline-block" tabindex="0" data-toggle="tooltip"
                   data-placement="bottom" title="스터디 공개중">
                 <button class="btn btn-primary btn-sm" style="pointer-events: none" type="button"
                         disabled>DRAFT</button>
             </span>
-            <span th:if="${!study.closed}" class="d-inline-block" tabindex="0" data-toggle="tooltip"
+            <span th:if="${study.closed}" class="d-inline-block" tabindex="0" data-toggle="tooltip"
                   data-placement="bottom" title="스터디 종료함">
                 <button class="btn btn-primary btn-sm" style="pointer-events: none" type="button"
                         disabled>CLOSED</button>
@@ -30,14 +32,14 @@
             </span>
             <span sec:authorize="isAuthenticated()" th:if="${study.isJoinable(#authentication.principal)}"
                   class="btn btn-group" role="group">
-                <a class="btn btn-primary" th:href="@{'/study/' + ${study.path} + '/join/'}">스터디 가입</a>
-                <a class="btn btn-outline-primary" th:href="@{'/study' + ${study.path} + '/members'}"
+                <a class="btn btn-primary" th:href="@{'/study/' + ${study.path} + '/join'}">스터디 가입</a>
+                <a class="btn btn-outline-primary disabled" th:href="@{'/study' + ${study.path} + '/members'}"
                    th:text="${study.members.size()}">1</a>
             </span>
             <span sec:authorize="isAuthenticated()" th:if="${!study.closed && study.isMember(#authentication.principal)}"
                   class="btn-group" role="group">
-                <a class="btn btn-outline-warning" th:href="@{'/study' + ${study.path} + '/leave'}">스터디 탈퇴</a>
-                <a class="btn btn-outline-primary" th:href="@{'/study' + ${study.path} + '/members'}"
+                <a class="btn btn-outline-warning" th:href="@{'/study/' + ${study.path} + '/leave'}">스터디 탈퇴</a>
+                <a class="btn btn-outline-primary disabled" th:href="@{'/study' + ${study.path} + '/members'}"
                    th:text="${study.members.size()}">1</a>
             </span>
             <span sec:authorize="isAuthenticated()" class="btn-group" role="group"
@@ -72,6 +74,7 @@
     </div>
 </div>
 
+<!-- 스터디 메뉴 -->
 <div th:fragment="study-menu(currentMenu)" class="row px-3 justify-content-center bg-light">
     <nav class="col-10 nav nav-tabs">
         <a class="nav-item nav-link" th:classappend="${currentMenu == 'info'}? active" th:href="@{'/study/' + ${study.path}}">
@@ -90,6 +93,7 @@
     </nav>
 </div>
 
+<!-- 스터디 구성원 -->
 <div th:fragment="member-list(members, isManager)" class="row justify-content-center container">
     <ul class="list-unstyled col-10">
         <li th:each="member: ${members}" class="media mt-2">
@@ -108,6 +112,7 @@
     </ul>
 </div>
 
+<!-- 스터디 설정 메뉴 -->
 <div th:fragment="settings-menu (currentMenu)" class="list-group">
     <a th:href="@{'/study/' + ${study.path} +  '/settings/description'}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'description'}  ? active">소개</a>
     <a th:href="@{'/study/' + ${study.path} +  '/settings/banner'}" class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'banner'} ? active">배너 이미지</a>
@@ -116,7 +121,7 @@
     <a th:href="@{'/study/' + ${study.path} +  '/settings/study'}" class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'study'} ? active">스터디</a>
 </div>
 
-<!-- Ajax csrf 토큰 필요 -->
+<!-- 스터디 설정 WYSIWYG  (Ajax csrf 토큰 필요) -->
 <script th:fragment="summernote-script" type="application/javascript">
     $(function () {
         $('#fullDescription').summernote({
@@ -149,4 +154,11 @@
             }
         })
     }
+</script>
+
+<!-- 스터디 툴팁 -->
+<script th:fragment="tooltip">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 </script>

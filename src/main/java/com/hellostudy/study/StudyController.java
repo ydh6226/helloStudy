@@ -36,6 +36,8 @@ public class StudyController {
 
     private final AppProperties appProperties;
 
+    private static final String BASE_REDIRECT_URL = "redirect:/study";
+
     @InitBinder("studyForm")
     private void studyFormInitBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(studyFormValidator);
@@ -107,5 +109,24 @@ public class StudyController {
         model.addAttribute(account);
         model.addAttribute(study);
         return "study/members";
+    }
+
+
+    @GetMapping("/study/{path}/join")
+    public String joinStudy(@CurrentUser Account account, @PathVariable("path") String path) {
+        Study study = studyService.getStudyWithMember(path);
+        studyService.join(account, study);
+        return BASE_REDIRECT_URL + "/" + encodePath(path);
+    }
+
+    @GetMapping("/study/{path}/leave")
+    public String leaveStudy(@CurrentUser Account account, @PathVariable("path") String path) {
+        Study study = studyService.getStudyWithMember(path);
+        studyService.leave(account, study);
+        return BASE_REDIRECT_URL + "/" + encodePath(path);
+    }
+
+    private String encodePath(String path) {
+        return URLEncoder.encode(path, StandardCharsets.UTF_8);
     }
 }
