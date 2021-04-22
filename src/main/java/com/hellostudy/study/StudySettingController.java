@@ -287,7 +287,7 @@ public class StudySettingController {
         Study study = studyService.getStudyWithoutFetch(account, path);
         studyService.updatePath(study, newPath);
         attributes.addFlashAttribute("message", "스터디 경로를 변경했습니다.");
-        return getRedirectUrl("/study", path);
+        return getRedirectUrl("/study", newPath);
     }
 
     @PostMapping("/study/updateTitle")
@@ -304,6 +304,15 @@ public class StudySettingController {
         studyService.updateTitle(study, studyTitleForm.getTitle());
         attributes.addFlashAttribute("message", "스터디 이름을 변경했습니다.");
         return getRedirectUrl("/study", path);
+    }
+
+    @PostMapping("/study/delete")
+    public String deleteStudy(@CurrentUser Account account, Model model,
+                              @PathVariable("path") String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyWithoutFetch(account, path);
+
+        studyService.deleteStudy(study);
+        return "redirect:/";
     }
 
 

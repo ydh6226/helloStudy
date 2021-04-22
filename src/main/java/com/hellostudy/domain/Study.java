@@ -151,4 +151,8 @@ public class Study {
     public void updatePath(String path) {
         this.path = path;
     }
+
+    public boolean isRemovable() {
+        return !published;
+    }
 }

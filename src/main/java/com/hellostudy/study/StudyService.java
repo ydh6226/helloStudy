@@ -128,4 +128,11 @@ public class StudyService {
         }
         return !studyRepository.existsByPath(newPath);
     }
+
+    public void deleteStudy(Study study) {
+        if (!study.isRemovable()) {
+            throw new RuntimeException("모집을 했던 스터디는 삭제할 수 없습니다.");
+        }
+        studyRepository.delete(study);
+    }
 }

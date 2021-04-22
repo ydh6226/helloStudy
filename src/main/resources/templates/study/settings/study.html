@@ -147,6 +147,24 @@
 
             <!-- 스터디 삭제 -->
             <div class="row">
+                <h3 class="col-12 text-danger">스터디 삭제</h3>
+                <form th:action="@{'/study/' + ${path} + '/settings/study/delete'}" class="needs-validation col-12" method="post"  novalidate>
+                    <div th:if="${study.isRemovable()}" class="alert alert-danger form-group col-12" role="alert">
+                        스터디를 삭제하면 스터디 관련 모든 기록을 삭제하며 복구할 수 없습니다.<br>
+                        <b>다음에 해당하는 스터디는 자동으로 삭제됩니다.</b>
+                        <ul>
+                            <li>만든지 1주일이 지난 비공개 스터디</li>
+                            <li>스터디 공개 이후, 한달 동안 모임을 만들지 않은 스터디</li>
+                            <li>스터디 공개이후, 모임을 만들지 않고 종료한 스터디</li>
+                        </ul>
+                    </div>
+                    <div th:if="${!study.isRemovable()}" class="alert alert-danger form-group col-12" role="alert">
+                        공개중이고 모임을 했던 스터디는 삭제할 수 없습니다.
+                    </div>
+                    <div th:if="${study.isRemovable()}" class="form-group text-center">
+                        <button type="submit" class="btn btn-outline-danger">스터디 삭제</button>
+                    </div>
+                </form>
                 <hr>
             </div>
         </div>
