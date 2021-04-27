@@ -28,6 +28,11 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
+    public Study getStudyWithManagers(Account account, String path) {
+        return studyVerification(studyRepository.findStudyWithManagerByPath(path), account, path);
+    }
+
+    @Transactional(readOnly = true)
     public Study getStudyToUpdateDescription(Account account, String path) {
         return studyVerification(studyRepository.findStudyWithAllInfoByPath(path), account, path);
     }
