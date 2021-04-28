@@ -1,4 +1,4 @@
-package com.hellostudy.event;
+package com.hellostudy.event.form;
 
 import com.hellostudy.domain.EventType;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class EventForm {
 
     private String description;
 
-    private EventType eventType = EventType.FSFS;
+    private EventType eventType = EventType.FCFS;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endEnrollmentDateTime;

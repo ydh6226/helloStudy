@@ -169,4 +169,8 @@ public class Study {
             throw new IllegalStateException("가입하지 않은 스터디 입니다.");
         }
     }
+
+    public String getEncodePath() {
+        return URLEncoder.encode(path, StandardCharsets.UTF_8);
+    }
 }

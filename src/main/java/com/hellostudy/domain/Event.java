@@ -1,8 +1,8 @@
 package com.hellostudy.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.hellostudy.account.UserAccount;
+import com.hellostudy.event.form.EventForm;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,16 +10,17 @@ import java.util.List;
 
 @Entity
 @Getter @EqualsAndHashCode(of = "id")
-@NoArgsConstructor
+@Setter(value = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Event {
 
     @Id @GeneratedValue
     Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Study study;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account createBy;
 
     @Column(nullable = false)
@@ -47,4 +48,54 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;
+
+    public static Event createEvent(EventForm eventForm) {
+        Event event = new Event();
+        event.setTitle(eventForm.getTitle());
+        event.setDescription(eventForm.getDescription());
+        event.setEventType(eventForm.getEventType());
+        event.setEndEnrollmentDateTime(eventForm.getEndEnrollmentDateTime());
+        event.setStartDateTime(eventForm.getStartDateTime());
+        event.setEndDateTime(eventForm.getEndDateTime());
+        event.setLimitOfEnrollments(event.getLimitOfEnrollments());
+
+        return event;
+    }
+
+    public void initEvent(Account account, Study study) {
+        createDateTime = LocalDateTime.now();
+        createBy = account;
+        this.study = study;
+    }
+
+    public boolean isEnrollableFor(UserAccount userAccount) {
+        return isNotClosed() || !isEnrolled(userAccount.getAccount());
+    }
+
+    public boolean isDisEnrollableFor(UserAccount userAccount) {
+        return isNotClosed() || isEnrolled(userAccount.getAccount());
+    }
+
+    public boolean isAttended(UserAccount userAccount) {
+        Account account = userAccount.getAccount();
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getAccount().equals(account) && enrollment.isAttended()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isNotClosed() {
+        return LocalDateTime.now().isBefore(endEnrollmentDateTime);
+    }
+
+    private boolean isEnrolled(Account account) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getAccount().equals(account)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
