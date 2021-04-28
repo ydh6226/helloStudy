@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -24,5 +26,9 @@ public class EventService {
     public Event findEventWithAllInfoById(Long id) {
         return eventRepository.findEventWithAllInfoById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재 하지 않는 모임입니다."));
+    }
+
+    public List<Event> findEventWithEnrollmentsByStudyId(Long studyId) {
+        return eventRepository.findEventWithEnrollmentsByStudyId(studyId);
     }
 }

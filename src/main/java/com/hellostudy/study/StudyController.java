@@ -3,7 +3,10 @@ package com.hellostudy.study;
 import com.hellostudy.account.CurrentUser;
 import com.hellostudy.config.AppProperties;
 import com.hellostudy.domain.Account;
+import com.hellostudy.domain.Event;
 import com.hellostudy.domain.Study;
+import com.hellostudy.event.EventRepository;
+import com.hellostudy.event.EventService;
 import com.hellostudy.study.form.StudyForm;
 import com.hellostudy.study.validator.StudyFormValidator;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -35,6 +41,8 @@ public class StudyController {
     private final StudyFormValidator studyFormValidator;
 
     private final AppProperties appProperties;
+
+    private final EventService eventService;
 
     private static final String BASE_REDIRECT_URL = "redirect:/study";
 
@@ -128,5 +136,29 @@ public class StudyController {
 
     private String encodePath(String path) {
         return URLEncoder.encode(path, StandardCharsets.UTF_8);
+    }
+
+    @GetMapping("/study/{path}/events")
+    public String eventsView(@CurrentUser Account account, @PathVariable("path") String path, Model model) {
+        Study study = studyService.getStudy(path);
+        model.addAttribute(account);
+        model.addAttribute(study);
+
+        List<Event> events = eventService.findEventWithEnrollmentsByStudyId(study.getId());
+        List<Event> newEvents = new ArrayList<>();
+        List<Event> endEvents = new ArrayList<>();
+
+        for (Event event : events) {
+            if (event.getEndDateTime().isAfter(LocalDateTime.now())) {
+                newEvents.add(event);
+                continue;
+            }
+            endEvents.add(event);
+        }
+
+        model.addAttribute("newEvents", newEvents);
+        model.addAttribute("endEvents", endEvents);
+
+        return "study/events";
     }
 }

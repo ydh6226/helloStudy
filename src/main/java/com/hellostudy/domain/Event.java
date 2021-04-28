@@ -57,9 +57,13 @@ public class Event {
         event.setEndEnrollmentDateTime(eventForm.getEndEnrollmentDateTime());
         event.setStartDateTime(eventForm.getStartDateTime());
         event.setEndDateTime(eventForm.getEndDateTime());
-        event.setLimitOfEnrollments(event.getLimitOfEnrollments());
+        event.setLimitOfEnrollments(eventForm.getLimitOfEnrollments());
 
         return event;
+    }
+
+    public int numberOfRemainSpot() {
+        return limitOfEnrollments - (int) enrollments.stream().filter(Enrollment::isAccepted).count();
     }
 
     public void initEvent(Account account, Study study) {
@@ -86,7 +90,7 @@ public class Event {
         return false;
     }
 
-    private boolean isNotClosed() {
+    public boolean isNotClosed() {
         return LocalDateTime.now().isBefore(endEnrollmentDateTime);
     }
 

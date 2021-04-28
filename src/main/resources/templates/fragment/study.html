@@ -44,7 +44,7 @@
             </span>
             <span sec:authorize="isAuthenticated()" class="btn-group" role="group"
                   th:if="${study.published && !study.closed && study.isManager(#authentication.principal)}">
-                <a class="btn btn-outline-primary" th:href="@{'/study' + ${study.path} + '/new-event'}">
+                <a class="btn btn-outline-primary" th:href="@{'/study/' + ${study.path} + '/new-event'}">
                     <i class="fas fa-plus"></i> 모임 만들기</a>
             </span>
         </div>

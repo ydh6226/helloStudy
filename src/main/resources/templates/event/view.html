@@ -82,13 +82,13 @@
         </div>
 
         <div class="row py-2 justify-content-center">
-            <div class="col-7 border-right">
+            <div class="col-lg-7 border-right">
                 <span class="font-weight-light">상세 모임 설명</span>
-                <div class="mt-1 border mb-3" th:utext="${event.description}"></div>
+                <div class="mt-1 border mb-3" style="overflow: hidden" th:utext="${event.description}"></div>
 
                 <span class="font-weight-light mt-5">모임 참가 신청 (<span th:text="${event.enrollments.size()}"></span>)</span>
             </div>
-            <dl class="col-3 pt-3 text-right">
+            <dl class="col-lg-3 pt-3 text-right">
                 <dt class="font-weight-light">모집 방법</dt>
                 <dd>
                     <span th:if="${event.eventType == T(com.hellostudy.domain.EventType).FCFS}">선착순</span>
@@ -140,20 +140,6 @@
     </div>
     <div th:replace="fragments.html::footer"></div>
     <div th:replace="fragments.html::form-validation"></div>
-    <script type="application/javascript">
-        $(function () {
-            moment.locale('ko');
-            $('.date').text(function (index, dateTime) {
-                return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").format('LL');
-            })
-            $('.weekday').text(function (index, dateTime) {
-                return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").format('dddd');
-            })
-            $('.time').text(function (index, dateTime) {
-                console.log(index);
-                return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").format('LT');
-            })
-        })
-    </script>
+    <script th:replace="fragment/event::momentJs"></script>
 </body>
 </html>
