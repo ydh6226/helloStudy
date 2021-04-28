@@ -14,6 +14,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.net.http.HttpRequest;
 import java.util.List;
 
 @Controller
@@ -26,8 +29,6 @@ public class EventController {
     private final EventService eventService;
 
     private final EventFormValidator eventFormValidator;
-
-    private final EventRepository eventRepository;
 
     @InitBinder("eventForm")
     public void eventFormValidator(WebDataBinder webDataBinder) {
@@ -44,7 +45,7 @@ public class EventController {
 
     @PostMapping("/new-event")
     public String createEvent(@CurrentUser Account account, @PathVariable String path, Model model,
-                              EventForm eventForm, BindingResult result) {
+                              @Valid EventForm eventForm, BindingResult result) {
         Study study = studyService.getStudyWithManagers(account, path);
         if (result.hasErrors()) {
             model.addAttribute(study);

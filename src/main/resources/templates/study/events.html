@@ -68,8 +68,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="event, idx : ${endEvents}">
-                            <th scope="row" th:text="${idx.count}"></th>
+                        <tr th:each="event : ${endEvents}">
+                            <th scope="row" th:text="${eventStat.count}"></th>
                             <td th:text="${event.title}"></td>
                             <td class="date" th:text="${event.endDateTime}"></td>
                             <td>

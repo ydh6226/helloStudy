@@ -4,21 +4,24 @@ import com.hellostudy.account.AccountRepository;
 import com.hellostudy.account.AccountService;
 import com.hellostudy.account.form.SignUpForm;
 import com.hellostudy.domain.Account;
+import com.hellostudy.domain.Event;
+import com.hellostudy.domain.EventType;
 import com.hellostudy.domain.Study;
-import org.assertj.core.api.Assertions;
+import com.hellostudy.event.EventService;
+import com.hellostudy.event.form.EventForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.context.support.TestExecutionEvent.TEST_EXECUTION;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,6 +41,9 @@ class StudyControllerTest {
 
     @Autowired
     AccountService accountService;
+
+    @Autowired
+    EventService eventService;
 
     @Autowired
     StudyRepository studyRepository;
@@ -114,7 +120,6 @@ class StudyControllerTest {
     @WithUserDetails(value = email, setupBefore = TEST_EXECUTION)
     @DisplayName("스터디 조회")
     void viewStudy() throws Exception {
-
         String studyPath = "hello-path";
         Study study = new Study(studyPath, "타이틀", "짧은설명", "긴설명");
         Account findAccount = accountRepository.findByEmail(email);
@@ -126,4 +131,19 @@ class StudyControllerTest {
                 .andExpect(model().attributeExists("study"));
     }
 
+    @Test
+    @WithUserDetails(value = email, setupBefore = TEST_EXECUTION)
+    @DisplayName("모임 목록 조회")
+    void viewEventList() throws Exception {
+        String studyPath = "hello-path";
+        Study study = new Study(studyPath, "타이틀", "짧은설명", "긴설명");
+        Account findAccount = accountRepository.findByEmail(email);
+
+        studyService.createNewStudy(study, findAccount);
+
+        mockMvc.perform(get("/study/" + studyPath + "/events"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("study/events"))
+                .andExpect(model().attributeExists("account", "study", "newEvents", "endEvents"));
+    }
 }
