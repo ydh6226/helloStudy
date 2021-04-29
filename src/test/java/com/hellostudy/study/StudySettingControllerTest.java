@@ -28,6 +28,7 @@ import java.net.BindException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -126,24 +127,22 @@ class StudySettingControllerTest {
         assertThat(findStudy.getTags().contains(findTag.get())).isTrue();
     }
 
+    @Test
+    @WithUserDetails(value = EMAIL, setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("태그 추가 - 존재하지 않는 스터디 경로")
+    void addTagWithWrongStudyPath() {
+        String tagTitle = "어서와 스프링";
 
-    // TODO: 2021-04-14 에러 처리 테스트
-//    @Test
-//    @WithUserDetails(value = EMAIL, setupBefore = TestExecutionEvent.TEST_EXECUTION)
-//    @DisplayName("태그 추가 - 존재하지 않는 스터디 경로")
-//    void addTagWithWrongStudyPath() throws Exception {
-//        String tagTitle = "어서와 스프링";
-//
-//        TagForm tagForm = new TagForm();
-//        tagForm.setTagTitle(tagTitle);
-//
-//        assertThrows(IllegalArgumentException.class, () ->
-//                        mockMvc.perform(post("/study/wrong-path/settings" + "/tags/add")
-//                                .contentType(MediaType.APPLICATION_JSON)
-//                                .content(objectMapper.writeValueAsString(tagForm))
-//                                .with(csrf()))
-//                );
-//    }
+        TagForm tagForm = new TagForm();
+        tagForm.setTagTitle(tagTitle);
+
+        assertThatThrownBy(() ->
+                mockMvc.perform(post("/study/wrong-path/settings" + "/tags/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tagForm))
+                .with(csrf())))
+                .hasCause(new IllegalArgumentException("wrong-path에 해당하는 스터디가 없습니다."));
+    }
 
     @Test
     @WithUserDetails(value = EMAIL, setupBefore = TestExecutionEvent.TEST_EXECUTION)
