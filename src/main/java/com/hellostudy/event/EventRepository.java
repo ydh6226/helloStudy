@@ -14,4 +14,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @EntityGraph(attributePaths = {"enrollments"})
     List<Event> findEventWithEnrollmentsByStudyId(Long studyId);
+
+    Optional<Event> findEventWithoutFetchById(Long studyId);
 }

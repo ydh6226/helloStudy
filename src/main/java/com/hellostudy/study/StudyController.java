@@ -12,6 +12,7 @@ import com.hellostudy.study.validator.StudyFormValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,7 +91,7 @@ public class StudyController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/localImage/{name}")
+    @GetMapping(value = "/localImage/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) {
         try {
             FileInputStream fileInputStream = new FileInputStream(appProperties.getImageDirectory() + name);

@@ -129,7 +129,8 @@
                 <th:block th:if="${study.isManager(#authentication.principal)}">
                     <dt class="font-weight-light">모임 관리</dt>
                     <dd>
-                        <a class="btn btn-outline-primary btn-sm" href="">모임 수정</a><br>
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/edit'}">모임 수정</a><br>
                         <a class="btn btn-outline-danger btn-sm mt-1" href="">모임 취소</a>
                     </dd>
                 </th:block>

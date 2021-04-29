@@ -1,6 +1,7 @@
 package com.hellostudy.domain;
 
 import com.hellostudy.account.UserAccount;
+import com.hellostudy.event.form.EventEditForm;
 import com.hellostudy.event.form.EventForm;
 import lombok.*;
 
@@ -93,6 +94,15 @@ public class Event {
 
     public boolean isNotClosed() {
         return LocalDateTime.now().isBefore(endEnrollmentDateTime);
+    }
+
+    public void editEvent(EventEditForm eventEditForm) {
+        title = eventEditForm.getTitle();
+        description = eventEditForm.getDescription();
+        endEnrollmentDateTime  = eventEditForm.getEndEnrollmentDateTime();
+        startDateTime = eventEditForm.getStartDateTime();
+        endDateTime = eventEditForm.getEndDateTime();
+        limitOfEnrollments = eventEditForm.getLimitOfEnrollments();
     }
 
     private boolean isEnrolled(Account account) {

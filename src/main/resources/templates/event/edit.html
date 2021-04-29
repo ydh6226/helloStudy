@@ -14,12 +14,12 @@
 
     <div class="container">
         <div class="text-center py-5">
-            <h2><a th:href="@{'/study/' + ${study.path}}" th:text="${study.title}">스터디 이름</a> / 새모임 만들기</h2>
+            <h2><a th:href="@{'/study/' + ${study.path}}" th:text="${study.title}">스터디 이름</a> / 모임 수정하기</h2>
         </div>
 
         <div class="row justify-content-center">
-            <form class="needs-validation col-sm-10" th:action="@{'/study/' + ${study.path} + '/new-event'}"
-                  th:object="${eventForm}" method="post" novalidate>
+            <form class="needs-validation col-sm-10" th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/edit'}"
+                  th:object="${eventEditForm}" method="post" novalidate>
                 <div class="form-group">
                     <label for="title">모임 이름</label>
                     <input type="text" id="title" th:field="*{title}" class="form-control"
@@ -30,18 +30,6 @@
                     <small class="invalid-feedback">모임 이름을 입력하세요.</small>
                     <small class="form-text text-danger" th:if="${#fields.hasErrors('title')}"
                            th:errors="*{title}">title Error</small>
-                </div>
-                <div class="form-group">
-                    <label for="eventType">모집방법</label>
-                    <select id="eventType" class="custom-select" th:field="*{eventType}" aria-describedby="eventTypeHelp">
-                        <option value="FCFS">선착순</option>
-                        <option value="CONFIRMATIVE">관리자 확인</option>
-                    </select>
-                    <small id="eventTypeHelp" class="form-text text-muted">
-                        두가지 모집 방법이 있습니다.<br>
-                        <strong>선착순</strong>으로 모집하는 경우, 모집 인원 이내의 접수는 자동으로 확정됩니다.
-                        <strong>확인</strong>으로 모집하는 경우, 신청목록을 조회하고 직접 확정 여부를 정할 수 있습니다.
-                    </small>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-3">
@@ -99,7 +87,7 @@
                 </div>
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-outline-primary">
-                        모임 생성
+                        수정 하기
                     </button>
                 </div>
             </form>
