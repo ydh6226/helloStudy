@@ -102,6 +102,13 @@ public class EventController {
         return getRedirectEventViewUrl(study, eventId);
     }
 
+    @PostMapping("/events/{id}/delete")
+    public String eventCancel(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId) {
+        Study study = studyService.getStudyWithManagers(account, path);
+        eventService.eventCancel(eventId);
+        return "redirect:/study/" + study.getEncodePath();
+    }
+
     private String getRedirectEventViewUrl(Study study, Long eventId) {
         return "redirect:/study/" + study.getEncodePath() + "/events/" + eventId;
     }

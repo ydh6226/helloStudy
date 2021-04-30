@@ -4,16 +4,21 @@ import com.hellostudy.domain.Account;
 import com.hellostudy.domain.Event;
 import com.hellostudy.domain.Study;
 import com.hellostudy.event.form.EventEditForm;
+import com.hellostudy.study.StudyRepository;
+import com.hellostudy.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EventService {
+
+    private final StudyService studyService;
 
     private final EventRepository eventRepository;
 
@@ -44,5 +49,12 @@ public class EventService {
 
     private IllegalArgumentException noSuchEventException() {
         return new IllegalArgumentException();
+    }
+
+    @Transactional
+    public void eventCancel(Long id) {
+        Event event = eventRepository.findEventWithEnrollmentsById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재 하지 않는 모임입니다."));
+        eventRepository.delete(event);
     }
 }

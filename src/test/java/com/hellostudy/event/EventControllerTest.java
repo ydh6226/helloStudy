@@ -74,7 +74,7 @@ class EventControllerTest {
     @WithUserDetails(value = EMAIL, setupBefore = TEST_EXECUTION)
     @DisplayName("모임 생성 폼")
     void eventForm() throws Exception {
-        mockMvc.perform(get(BASE_URL+ "/new-event"))
+        mockMvc.perform(get(BASE_URL + "/new-event"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("event/form"))
                 .andExpect(model().attributeExists("account", "study", "eventForm"));
@@ -120,9 +120,24 @@ class EventControllerTest {
         Long eventId = createEvent(getCurrentUser(), getStudy(STUDY_PATH));
 
         mockMvc.perform(get(BASE_URL + "/events/" + eventId))
-        .andExpect(model().attributeExists("account", "study", "event"))
-        .andExpect(status().isOk())
-        .andExpect(view().name("event/view"));
+                .andExpect(model().attributeExists("account", "study", "event"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("event/view"));
+    }
+
+    @Test
+    @WithUserDetails(value = EMAIL, setupBefore = TEST_EXECUTION)
+    @DisplayName("모임 취소")
+    void eventCancel() throws Exception {
+        Long eventId = createEvent(getCurrentUser(), getStudy(STUDY_PATH));
+
+        mockMvc.perform(post(BASE_URL + "/events/" + eventId + "/delete")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(BASE_URL));
+
+        assertThat(eventRepository.findAll().size()).isEqualTo(0);
+        // TODO: 2021-04-30 enrollments까지 같이 삭제 되는지 확인 
     }
 
     private Account createAccount() {
@@ -176,6 +191,4 @@ class EventControllerTest {
         params.add("limitOfEnrollments", "3");
         return params;
     }
-
-
 }

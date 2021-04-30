@@ -17,7 +17,7 @@ public class Enrollment {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
     private LocalDateTime enrolledAt;

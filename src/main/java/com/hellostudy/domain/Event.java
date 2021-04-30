@@ -45,7 +45,7 @@ public class Event {
 
     private Integer limitOfEnrollments;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
