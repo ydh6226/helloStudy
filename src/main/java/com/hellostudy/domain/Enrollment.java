@@ -35,8 +35,24 @@ public class Enrollment {
         return enrollment;
     }
 
-    public void acceptAccount(Event event) {
+    public void acceptForFcfs(Event event) {
         accepted = true;
         event.increaseCurrentAcceptedCount();
+    }
+
+    public void acceptForConfirm() {
+        accepted = true;
+    }
+
+    public void disAcceptForConfirm() {
+        accepted = false;
+    }
+
+    public void attend() {
+        attended = true;
+    }
+
+    public void notAttend() {
+        attended = false;
     }
 }

@@ -123,6 +123,38 @@ public class EventController {
         return getRedirectEventViewUrl(study, eventId);
     }
 
+    @PostMapping("/events/{id}/checkIn/{enrollmentId}")
+    public String checkIn(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId,
+                          @PathVariable("enrollmentId") Long enrollmentId) {
+        Study study = studyService.getStudyWithManagers(account, path);
+        eventService.checkIn(eventId, enrollmentId);
+        return getRedirectEventViewUrl(study, eventId);
+    }
+
+    @PostMapping("/events/{id}/checkOut/{enrollmentId}")
+    public String checkOut(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId,
+                          @PathVariable("enrollmentId") Long enrollmentId) {
+        Study study = studyService.getStudyWithManagers(account, path);
+        eventService.checkOut(eventId, enrollmentId);
+        return getRedirectEventViewUrl(study, eventId);
+    }
+
+    @PostMapping("/events/{id}/accept/{enrollmentId}")
+    public String accept(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId,
+                           @PathVariable("enrollmentId") Long enrollmentId) {
+        Study study = studyService.getStudyWithManagers(account, path);
+        eventService.accept(eventId, enrollmentId);
+        return getRedirectEventViewUrl(study, eventId);
+    }
+
+    @PostMapping("/events/{id}/disAccept/{enrollmentId}")
+    public String disAccept(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId,
+                         @PathVariable("enrollmentId") Long enrollmentId) {
+        Study study = studyService.getStudyWithManagers(account, path);
+        eventService.disAccept(eventId, enrollmentId);
+        return getRedirectEventViewUrl(study, eventId);
+    }
+
     private String getRedirectEventViewUrl(Study study, Long eventId) {
         return "redirect:/study/" + study.getEncodePath() + "/events/" + eventId;
     }

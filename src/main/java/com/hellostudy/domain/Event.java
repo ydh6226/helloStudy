@@ -48,6 +48,7 @@ public class Event {
     private int currentAcceptedCount = 0;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy(value = "enrolledAt")
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -120,13 +121,17 @@ public class Event {
         this.enrollments.add(enrollment);
 
         if (eventType == EventType.FCFS && !isEnrollmentsFull()) {
-            enrollment.acceptAccount(this);
+            enrollment.acceptForFcfs(this);
         }
     }
 
     public void remove(Account account) {
         for (Enrollment enrollment : enrollments) {
             if (enrollment.getAccount().equals(account)) {
+                if (enrollment.isAttended()) {
+                    throw new IllegalArgumentException("출석한 모임은 취소할 수 없습니다.");
+                }
+
                 enrollments.remove(enrollment);
 
                 if (enrollment.isAccepted()) {
@@ -135,6 +140,7 @@ public class Event {
                 return;
             }
         }
+
         throw new IllegalArgumentException("참가 신청 하지 않은 회원입니다.");
     }
 
@@ -145,12 +151,56 @@ public class Event {
         return limitOfEnrollments > currentAcceptedCount && isExistsWaitingAccount();
     }
 
+    public boolean isCreatedBy(UserAccount userAccount) {
+        return createBy.equals(userAccount.getAccount());
+    }
+
     public int getCountCanAccept() {
         return Math.min(limitOfEnrollments - currentAcceptedCount, enrollments.size() - currentAcceptedCount);
     }
 
     public void increaseCurrentAcceptedCount() {
         currentAcceptedCount++;
+    }
+
+    public boolean checkIn(Long enrollmentId) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getId().equals(enrollmentId)) {
+                enrollment.attend();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkOut(Long enrollmentId) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getId().equals(enrollmentId)) {
+                enrollment.notAttend();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean accept(Long enrollmentId) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getId().equals(enrollmentId)) {
+                enrollment.acceptForConfirm();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean disAccept(Long enrollmentId) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getId().equals(enrollmentId)) {
+                enrollment.disAcceptForConfirm();
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isEnrolled(Account account) {
@@ -169,6 +219,4 @@ public class Event {
     private boolean isExistsWaitingAccount() {
         return (enrollments.size() - currentAcceptedCount) > 0;
     }
-
-
 }

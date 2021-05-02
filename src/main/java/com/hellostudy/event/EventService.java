@@ -2,17 +2,12 @@ package com.hellostudy.event;
 
 import com.hellostudy.domain.*;
 import com.hellostudy.event.form.EventEditForm;
-import com.hellostudy.study.StudyRepository;
-import com.hellostudy.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,12 +26,12 @@ public class EventService {
 
     public Event findEventWithAllInfoById(Long id) {
         return eventRepository.findEventWithAllInfoById(id)
-                .orElseThrow(this::noSuchEventException);
+                .orElseThrow(EventException::noSuchEventException);
     }
 
     public Event findEventWithoutFetchById(Long id) {
         return eventRepository.findEventWithoutFetchById(id)
-                .orElseThrow(this::noSuchEventException);
+                .orElseThrow(EventException::noSuchEventException);
     }
 
     public List<Event> findEventWithEnrollmentsByStudyId(Long studyId) {
@@ -53,21 +48,16 @@ public class EventService {
         }
     }
 
-    private IllegalArgumentException noSuchEventException() {
-        return new IllegalArgumentException("존재 하지 않는 모임입니다.");
-    }
-
     @Transactional
-    public void eventCancel(Long id) {
-        Event event = eventRepository.findEventWithEnrollmentsById(id)
-                .orElseThrow(this::noSuchEventException);
+    public void eventCancel(Long eventId) {
+        Event event = findEventWithEnrollmentsByEventId(eventId);
         eventRepository.delete(event);
     }
 
     @Transactional
     public void joinEvent(Long eventId, Account account) {
         Event event = eventRepository.findEventForJoinByIdQuery(eventId)
-                .orElseThrow(this::noSuchEventException);
+                .orElseThrow(EventException::noSuchEventException);
 
         if (event.isJoined(account)) {
             throw new IllegalStateException("이미 참가 신청한 모임입니다.");
@@ -80,7 +70,7 @@ public class EventService {
     @Transactional
     public void leaveEvent(Long eventId, Account account) {
         Event event = eventRepository.findEventForJoinByIdQuery(eventId)
-                .orElseThrow(this::noSuchEventException);
+                .orElseThrow(EventException::noSuchEventException);
 
         if (!event.isJoined(account)) {
             throw new IllegalStateException("참가 신청 하지 않은 모임입니다.");
@@ -94,6 +84,38 @@ public class EventService {
         }
     }
 
+    @Transactional
+    public void checkIn(Long eventId, Long enrollmentId) {
+        Event event = findEventWithEnrollmentsByEventId(eventId);
+        if (!event.checkIn(enrollmentId)) {
+            throw EventException.unAcceptedAccountException();
+        }
+    }
+
+    @Transactional
+    public void checkOut(Long eventId, Long enrollmentId) {
+        Event event = findEventWithEnrollmentsByEventId(eventId);
+        if (!event.checkOut(enrollmentId)) {
+            throw EventException.unAcceptedAccountException();
+        }
+    }
+
+    @Transactional
+    public void accept(Long eventId, Long enrollmentId) {
+        Event event = findEventWithEnrollmentsByEventId(eventId);
+        if (!event.accept(enrollmentId)) {
+            throw EventException.unRegisterAccountException();
+        }
+    }
+
+    @Transactional
+    public void disAccept(Long eventId, Long enrollmentId) {
+        Event event = findEventWithEnrollmentsByEventId(eventId);
+        if (!event.disAccept(enrollmentId)) {
+            throw EventException.unRegisterAccountException();
+        }
+    }
+
     private boolean canAcceptAnotherAccount (Event event) {
         return event.getEventType() == EventType.FCFS && event.CanAcceptOtherAccountAfterRemove();
     }
@@ -104,10 +126,29 @@ public class EventService {
         List<Enrollment> enrollments = event.getEnrollments();
         List<Enrollment> enrollmentsForAccept = enrollments.stream()
                 .filter(e -> !e.isAccepted())
-                .sorted(Comparator.comparing(Enrollment::getEnrolledAt))
                 .limit(count)
                 .collect(Collectors.toList());
 
-        enrollmentsForAccept.forEach(e -> e.acceptAccount(event));
+        enrollmentsForAccept.forEach(e -> e.acceptForFcfs(event));
+    }
+
+    private Event findEventWithEnrollmentsByEventId(Long eventId) {
+        return eventRepository.findEventWithEnrollmentsById(eventId)
+                .orElseThrow(EventException::noSuchEventException);
+    }
+
+
+    private static class EventException {
+        private static IllegalArgumentException noSuchEventException() {
+            return new IllegalArgumentException("존재 하지 않는 모임입니다.");
+        }
+
+        private static IllegalArgumentException unRegisterAccountException() {
+            return new IllegalArgumentException("등록 하지 않은 회원입니다.");
+        }
+
+        private static IllegalArgumentException unAcceptedAccountException() {
+            return new IllegalArgumentException("참가 신청 하지 않은 회원입니다.");
+        }
     }
 }
