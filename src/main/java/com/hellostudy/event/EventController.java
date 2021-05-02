@@ -62,7 +62,7 @@ public class EventController {
     public String EventView(@CurrentUser Account account, @PathVariable String path,
                             @PathVariable("id") Long eventId, Model model) {
         model.addAttribute(account);
-        model.addAttribute(studyService.getStudyWithManagers(account, path));
+        model.addAttribute(studyService.getStudyForView(path));
         model.addAttribute("event", eventService.findEventWithAllInfoById(eventId));
         return "event/view";
     }
@@ -107,6 +107,20 @@ public class EventController {
         Study study = studyService.getStudyWithManagers(account, path);
         eventService.eventCancel(eventId);
         return "redirect:/study/" + study.getEncodePath();
+    }
+
+    @PostMapping("/events/{id}/join")
+    public String joinEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId) {
+        Study study = studyService.pathVerification(path);
+        eventService.joinEvent(eventId, account);
+        return getRedirectEventViewUrl(study, eventId);
+    }
+
+    @PostMapping("/events/{id}/leave")
+    public String leaveEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable("id") Long eventId) {
+        Study study = studyService.pathVerification(path);
+        eventService.leaveEvent(eventId, account);
+        return getRedirectEventViewUrl(study, eventId);
     }
 
     private String getRedirectEventViewUrl(Study study, Long eventId) {

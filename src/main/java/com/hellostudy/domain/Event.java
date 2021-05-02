@@ -45,7 +45,9 @@ public class Event {
 
     private Integer limitOfEnrollments;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private int currentAcceptedCount = 0;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -75,17 +77,26 @@ public class Event {
     }
 
     public boolean isEnrollableFor(UserAccount userAccount) {
-        return isNotClosed() || !isEnrolled(userAccount.getAccount());
+        return isNotClosed() && !isEnrolled(userAccount.getAccount());
     }
 
     public boolean isDisEnrollableFor(UserAccount userAccount) {
-        return isNotClosed() || isEnrolled(userAccount.getAccount());
+        return isNotClosed() && isEnrolled(userAccount.getAccount());
     }
 
     public boolean isAttended(UserAccount userAccount) {
         Account account = userAccount.getAccount();
         for (Enrollment enrollment : enrollments) {
             if (enrollment.getAccount().equals(account) && enrollment.isAttended()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isJoined(Account account) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getAccount().equals(account)) {
                 return true;
             }
         }
@@ -105,6 +116,43 @@ public class Event {
         limitOfEnrollments = eventEditForm.getLimitOfEnrollments();
     }
 
+    public void join(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+
+        if (eventType == EventType.FCFS && !isEnrollmentsFull()) {
+            enrollment.acceptAccount(this);
+        }
+    }
+
+    public void remove(Account account) {
+        for (Enrollment enrollment : enrollments) {
+            if (enrollment.getAccount().equals(account)) {
+                enrollments.remove(enrollment);
+
+                if (enrollment.isAccepted()) {
+                    currentAcceptedCount--;
+                }
+                return;
+            }
+        }
+        throw new IllegalArgumentException("참가 신청 하지 않은 회원입니다.");
+    }
+
+    /**
+     * remove() 이후에 대기중인 유저가 있는지 확인 하는 함수
+     */
+    public boolean CanAcceptOtherAccountAfterRemove() {
+        return limitOfEnrollments > currentAcceptedCount && isExistsWaitingAccount();
+    }
+
+    public int getCountCanAccept() {
+        return Math.min(limitOfEnrollments - currentAcceptedCount, enrollments.size() - currentAcceptedCount);
+    }
+
+    public void increaseCurrentAcceptedCount() {
+        currentAcceptedCount++;
+    }
+
     private boolean isEnrolled(Account account) {
         for (Enrollment enrollment : enrollments) {
             if (enrollment.getAccount().equals(account)) {
@@ -113,4 +161,14 @@ public class Event {
         }
         return false;
     }
+
+    private boolean isEnrollmentsFull() {
+        return limitOfEnrollments <= currentAcceptedCount;
+    }
+
+    private boolean isExistsWaitingAccount() {
+        return (enrollments.size() - currentAcceptedCount) > 0;
+    }
+
+
 }

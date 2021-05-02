@@ -43,6 +43,13 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
+    public Study getStudyForView(String path) {
+        Study study = studyRepository.findStudyWithManagerByPath(path);
+        isExistingStudy(study, path);
+        return study;
+    }
+
+    @Transactional(readOnly = true)
     public Study getStudy(String path) {
         Study study = studyRepository.findByPath(path);
         isExistingStudy(study, path);
@@ -107,6 +114,12 @@ public class StudyService {
 
     public void stopRecruit(Study study) {
         study.stopRecruit();
+    }
+
+    public Study pathVerification(String path) {
+        Study study = studyRepository.findStudyWithoutFetchByPath(path);
+        isExistingStudy(study, path);
+        return study;
     }
 
     private void isManagerOfStudy(Account account, Study study) {

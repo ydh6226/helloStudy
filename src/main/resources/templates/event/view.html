@@ -19,11 +19,11 @@
             <div class="col-4 text-right">
                 <!-- 모달 버튼 -->
                 <th:block sec:authorize="isAuthenticated()">
-                    <button th:if="${event.isEnrollableFor(#authentication.principal)}" type="button"
+                    <button th:if="${event.isEnrollableFor(#authentication.principal)}" type="submit"
                             class="btn btn-outline-primary" data-toggle="modal" data-target="#enrollModal">
                         <i class="fas fa-plus-circle"></i> 참가 신청
                     </button>
-                    <button th:if="${!event.isDisEnrollableFor(#authentication.principal)}" type="button"
+                    <button th:if="${event.isDisEnrollableFor(#authentication.principal)}" type="button"
                             class="btn btn-outline-primary" data-toggle="modal" data-target="#disEnrollModal">
                         <i class="fas fa-minus-circle"></i> 참가 신청 취소
                     </button>
@@ -52,7 +52,9 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                            <button type="button" class="btn btn-primary">확인</button>
+                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/join'}" method="post">
+                                <button type="submit" class="btn btn-primary">확인</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -74,7 +76,9 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                            <button type="button" class="btn btn-primary">확인</button>
+                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/leave'}" method="post">
+                                <button type="submit" class="btn btn-primary">확인</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -87,6 +91,41 @@
                 <div class="mt-1 border mb-3" style="overflow: hidden" th:utext="${event.description}"></div>
 
                 <span class="font-weight-light mt-5">모임 참가 신청 (<span th:text="${event.enrollments.size()}"></span>)</span>
+                <div class="mt-1">
+                    <table class="table table-striped table-sm" th:if="${event.enrollments.size() > 0}">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">참석자</th>
+                            <th scope="col">참가 신청 일시</th>
+                            <th scope="col">참가 상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="enrollment : ${event.enrollments}">
+                            <td th:text="${enrollmentStat.count}"></td>
+                            <td>
+                                <a th:href="@{'/profile/' + ${enrollment.account.nickname}}">
+                                    <svg th:if="${#strings.isEmpty(enrollment.account.profileImage)}"
+                                         th:data-jdenticon-value="${enrollment.account.nickname}" width="24" height="24"></svg>
+                                    <img th:if="${!#strings.isEmpty(enrollment.account.profileImage)}"
+                                         th:src="${enrollment.account.profileImage}" width="24" height="24" class="rounded border">
+                                    <span th:text="${enrollment.account.nickname}"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <span class="date" th:text="${enrollment.enrolledAt}"></span>
+                                <span class="time" th:text="${enrollment.enrolledAt}"></span>
+                            </td>
+                            <td>
+                                <span th:if="${enrollment.accepted}">확정</span>
+                                <span th:if="${!enrollment.accepted}">대기중</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
             </div>
             <dl class="col-lg-3 pt-3 text-right">
                 <dt class="font-weight-light">모집 방법</dt>
