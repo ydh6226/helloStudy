@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<script th:fragment="momentJs" type="application/javascript">
+    $(function () {
+        moment.locale('ko');
+        $('.date').text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").format('LL');
+        })
+
+        $('.weekday').text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").format('dddd');
+        })
+
+        $('.time').text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").format('LT');
+        })
+
+        $('.day-time').text(function (index, dateTime) {
+            return moment(dateTime).calendar();
+        })
+
+        $('.relative-time').text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").fromNow()
+        })
+    })
+</script>
+
+</html>
