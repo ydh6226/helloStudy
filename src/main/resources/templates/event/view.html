@@ -105,7 +105,7 @@
                         <th scope="col">참석자</th>
                         <th scope="col">참가 신청 일시</th>
                         <th scope="col">참가 상태</th>
-                        <th scope="col" th:if="${event.eventType == T(com.hellostudy.domain.EventType).CONFIRMATIVE}">참가 신청 관리</th>
+                        <th scope="col" th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">참가 신청 관리</th>
                         <th scope="col" th:if="${event.isCreatedBy(#authentication.principal)}">출석 체크</th>
                     </tr>
                     </thead>
@@ -131,7 +131,7 @@
                             <span th:if="${enrollment.accepted}">확정</span>
                             <span th:if="${!enrollment.accepted}">대기중</span>
                         </td>
-                        <td th:if="${event.eventType == T(com.hellostudy.domain.EventType).CONFIRMATIVE}">
+                        <td th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">
                             <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/accept/' + ${enrollment.id}}"
                                   th:if="${!enrollment.accepted}" method="post">
                                 <button type="submit" class="btn btn-outline-success btn-sm">수락</button>
@@ -160,8 +160,8 @@
         <dl class="col-lg-3 pt-3 text-right">
             <dt class="font-weight-light">모집 방법</dt>
             <dd>
-                <span th:if="${event.eventType == T(com.hellostudy.domain.EventType).FCFS}">선착순</span>
-                <span th:if="${event.eventType == T(com.hellostudy.domain.EventType).CONFIRMATIVE}">관리자 확인</span>
+                <span th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).FCFS}">선착순</span>
+                <span th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">관리자 확인</span>
             </dd>
 
             <dt class="font-weight-light" th:if="${event.limitOfEnrollments != 0 }">모집 인원</dt>
