@@ -2,6 +2,7 @@ package com.hellostudy.modules.account;
 
 import com.hellostudy.modules.account.form.EmailForm;
 import com.hellostudy.modules.account.form.SignUpForm;
+import com.hellostudy.modules.account.repository.AccountRepository;
 import com.hellostudy.modules.account.validator.EmailFormValidator;
 import com.hellostudy.modules.account.validator.SignUpFormValidator;
 import lombok.RequiredArgsConstructor;

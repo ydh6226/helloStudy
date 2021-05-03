@@ -1,7 +1,7 @@
 package com.hellostudy.modules.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hellostudy.modules.account.AccountRepository;
+import com.hellostudy.modules.account.repository.AccountRepository;
 import com.hellostudy.modules.account.AccountService;
 import com.hellostudy.modules.account.form.SignUpForm;
 import com.hellostudy.modules.account.Account;

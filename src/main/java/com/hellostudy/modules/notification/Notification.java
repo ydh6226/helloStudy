@@ -1,6 +1,7 @@
 package com.hellostudy.modules.notification;
 
 import com.hellostudy.modules.account.Account;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 public class Notification {
 
@@ -23,7 +24,7 @@ public class Notification {
 
     private String message;
 
-    private boolean checked;
+    private boolean checked = false;
 
     @ManyToOne
     private Account account;
@@ -32,4 +33,13 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
+
+    public Notification(NotificationDto notificationDto) {
+        this.title = notificationDto.getTitle();
+        this.link = notificationDto.getLink();
+        this.message = notificationDto.getMessage();
+        this.account = notificationDto.getAccount();
+        this.createdTime = notificationDto.getCreatedTime();
+        this.notificationType = notificationDto.getNotificationType();
+    }
 }

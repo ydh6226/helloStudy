@@ -33,4 +33,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     @EntityGraph(attributePaths = {"tags"})
     Study findStudyWithTagsByPath(String path);
+
+    @EntityGraph(attributePaths = {"tags", "zones"})
+    Study findStudyWithTagsAndZonesById(Long studyId);
 }

@@ -1,6 +1,6 @@
 package com.hellostudy.modules.settings;
 
-import com.hellostudy.modules.account.AccountRepository;
+import com.hellostudy.modules.account.repository.AccountRepository;
 import com.hellostudy.modules.settings.form.NicknameForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

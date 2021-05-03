@@ -8,9 +8,9 @@ import org.springframework.context.ApplicationEvent;
 @Getter
 public class StudyCreateEvent {
 
-    private Study study;
+    private final Long studyId;
 
-    public StudyCreateEvent(Study study) {
-        this.study = study;
+    public StudyCreateEvent(Long studyId) {
+        this.studyId = studyId;
     }
 }

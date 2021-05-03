@@ -1,6 +1,6 @@
 package com.hellostudy.modules.main;
 
-import com.hellostudy.modules.account.AccountRepository;
+import com.hellostudy.modules.account.repository.AccountRepository;
 import com.hellostudy.modules.account.AccountService;
 import com.hellostudy.modules.account.form.SignUpForm;
 import org.junit.jupiter.api.BeforeEach;

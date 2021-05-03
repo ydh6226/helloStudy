@@ -2,6 +2,7 @@ package com.hellostudy.modules.account;
 
 import com.hellostudy.modules.account.form.SignUpForm;
 import com.hellostudy.infra.config.AppProperties;
+import com.hellostudy.modules.account.repository.AccountRepository;
 import com.hellostudy.modules.tag.Tag;
 import com.hellostudy.modules.zone.Zone;
 import com.hellostudy.infra.mail.EmailMessage;

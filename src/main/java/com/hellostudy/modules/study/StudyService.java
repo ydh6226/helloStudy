@@ -21,7 +21,6 @@ public class StudyService {
     public Study createNewStudy(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
         newStudy.addManager(account);
-        eventPublisher.publishEvent(new StudyCreateEvent(newStudy));
         return newStudy;
     }
 
@@ -105,6 +104,7 @@ public class StudyService {
 
     public void publish(Study study) {
         study.publish();
+        eventPublisher.publishEvent(new StudyCreateEvent(study.getId()));
     }
 
     public void close(Study study) {
