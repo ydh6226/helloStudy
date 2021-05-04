@@ -22,8 +22,12 @@
         })
 
         $('.relative-time').text(function (index, dateTime) {
-            return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").fromNow()
+            return moment(dateTime, "YYYY-MM-DD 'T' hh:mm").fromNow();
         })
+        $('.relative-minute').text(function (index, dateTime) {
+            return moment(dateTime).fromNow();
+        })
+
     })
 </script>
 

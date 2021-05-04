@@ -55,8 +55,6 @@ public class StudyEventListener {
                 notificationRepository.save(notification);
             }
         });
-
-
     }
 
     private Notification createNotification(Study study, Account account) {

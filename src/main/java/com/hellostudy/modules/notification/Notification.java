@@ -26,7 +26,7 @@ public class Notification {
 
     private boolean checked = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
     private LocalDateTime createdTime;
@@ -41,5 +41,9 @@ public class Notification {
         this.account = notificationDto.getAccount();
         this.createdTime = notificationDto.getCreatedTime();
         this.notificationType = notificationDto.getNotificationType();
+    }
+
+    public void updateAsRead() {
+        checked = true;
     }
 }
