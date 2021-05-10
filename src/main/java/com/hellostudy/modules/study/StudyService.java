@@ -1,9 +1,12 @@
 package com.hellostudy.modules.study;
 
 import com.hellostudy.modules.account.Account;
+import com.hellostudy.modules.study.event.StudyCreateEvent;
+import com.hellostudy.modules.study.event.StudyUpdateEvent;
 import com.hellostudy.modules.tag.Tag;
 import com.hellostudy.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyService {
 
     private final StudyRepository studyRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Study createNewStudy(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
@@ -65,6 +69,8 @@ public class StudyService {
     public void updateDescription(String path, String shortDescription, String fullDescription) {
         Study study = studyRepository.findStudyWithDescriptionByPath(path);
         study.updateDescription(shortDescription, fullDescription);
+
+        eventPublisher.publishEvent(new StudyUpdateEvent(study.getId(), "스터디 소개가 변경되었습니다."));
     }
 
     public void EnableStudyBanner(Study study) {
@@ -101,18 +107,22 @@ public class StudyService {
 
     public void publish(Study study) {
         study.publish();
+        eventPublisher.publishEvent(new StudyCreateEvent(study.getId()));
     }
 
     public void close(Study study) {
         study.close();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study.getId(), "스터디가 종료되었습니다."));
     }
 
     public void startRecruit(Study study) {
         study.startRecruit();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study.getId(), "팀원 모집을 시작했습니다."));
     }
 
     public void stopRecruit(Study study) {
         study.stopRecruit();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study.getId(), "팀원 모집을 종료했습니다."));
     }
 
     public Study pathVerification(String path) {

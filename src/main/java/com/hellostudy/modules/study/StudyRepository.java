@@ -16,6 +16,9 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     @EntityGraph(attributePaths = {"members"})
     Study findStudyWithMembersByPath(String path);
 
+    @EntityGraph(attributePaths = {"members"})
+    Study findStudyWithManagerAndMemberById(Long id);
+
     @EntityGraph(attributePaths = {"managers", "members", "tags", "zones"})
     Study findByPath(String path);
 
@@ -33,4 +36,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     @EntityGraph(attributePaths = {"tags"})
     Study findStudyWithTagsByPath(String path);
+
+    @EntityGraph(attributePaths = {"tags", "zones"})
+    Study findStudyWithTagsAndZonesById(Long studyId);
 }

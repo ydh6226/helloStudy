@@ -2,6 +2,7 @@ package com.hellostudy.modules.account;
 
 import com.hellostudy.infra.mail.EmailMessage;
 import com.hellostudy.infra.mail.EmailService;
+import com.hellostudy.modules.account.repository.AccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
