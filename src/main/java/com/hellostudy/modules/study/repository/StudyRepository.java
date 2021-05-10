@@ -1,11 +1,12 @@
-package com.hellostudy.modules.study;
+package com.hellostudy.modules.study.repository;
 
+import com.hellostudy.modules.study.Study;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-public interface StudyRepository extends JpaRepository<Study, Long> {
+public interface StudyRepository extends JpaRepository<Study, Long>, StudyRepositoryCustom {
     boolean existsByPath(String path);
 
     Study findStudyWithoutFetchByPath(String path);

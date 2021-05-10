@@ -3,6 +3,7 @@ package com.hellostudy.modules.study;
 import com.hellostudy.modules.account.Account;
 import com.hellostudy.modules.study.event.StudyCreateEvent;
 import com.hellostudy.modules.study.event.StudyUpdateEvent;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.tag.Tag;
 import com.hellostudy.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;

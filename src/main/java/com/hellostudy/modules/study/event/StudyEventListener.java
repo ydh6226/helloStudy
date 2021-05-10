@@ -10,7 +10,7 @@ import com.hellostudy.modules.notification.NotificationDto;
 import com.hellostudy.modules.notification.NotificationRepository;
 import com.hellostudy.modules.notification.NotificationType;
 import com.hellostudy.modules.study.Study;
-import com.hellostudy.modules.study.StudyRepository;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

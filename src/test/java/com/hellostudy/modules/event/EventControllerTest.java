@@ -6,7 +6,7 @@ import com.hellostudy.modules.account.form.SignUpForm;
 import com.hellostudy.modules.account.Account;
 import com.hellostudy.modules.study.Study;
 import com.hellostudy.modules.event.form.EventForm;
-import com.hellostudy.modules.study.StudyRepository;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.study.StudyService;
 import com.hellostudy.modules.study.form.StudyForm;
 import org.junit.jupiter.api.BeforeEach;
