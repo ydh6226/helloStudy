@@ -105,8 +105,10 @@
                         <th scope="col">참석자</th>
                         <th scope="col">참가 신청 일시</th>
                         <th scope="col">참가 상태</th>
-                        <th scope="col" th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">참가 신청 관리</th>
-                        <th scope="col" th:if="${event.isCreatedBy(#authentication.principal)}">출석 체크</th>
+                        <th:block th:if="${event.isCreatedBy(#authentication.principal)}">
+                            <th scope="col" th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">참가 신청 관리</th>
+                            <th scope="col">출석 체크</th>
+                        </th:block>
                     </tr>
                     </thead>
                     <tbody>
@@ -131,26 +133,29 @@
                             <span th:if="${enrollment.accepted}">확정</span>
                             <span th:if="${!enrollment.accepted}">대기중</span>
                         </td>
-                        <td th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">
-                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/accept/' + ${enrollment.id}}"
-                                  th:if="${!enrollment.accepted}" method="post">
-                                <button type="submit" class="btn btn-outline-success btn-sm">수락</button>
-                            </form>
-                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/disAccept/' + ${enrollment.id}}"
-                                  th:if="${enrollment.accepted}" method="post">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">취소</button>
-                            </form>
-                        </td>
-                        <td th:if="${event.isCreatedBy(#authentication.principal)}">
-                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/checkIn/' + ${enrollment.id}}"
-                                  th:if="${!enrollment.attended}" method="post">
-                                <button type="submit" class="btn btn-outline-success btn-sm">체크인</button>
-                            </form>
-                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/checkOut/' + ${enrollment.id}}"
-                                  th:if="${enrollment.attended}" method="post">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">체크인 취소</button>
-                            </form>
-                        </td>
+
+                        <th:block th:if="${event.isCreatedBy(#authentication.principal)}">
+                            <td th:if="${event.eventType == T(com.hellostudy.modules.event.EventType).CONFIRMATIVE}">
+                                <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/accept/' + ${enrollment.id}}"
+                                      th:if="${!enrollment.accepted}" method="post">
+                                    <button type="submit" class="btn btn-outline-success btn-sm">수락</button>
+                                </form>
+                                <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/disAccept/' + ${enrollment.id}}"
+                                      th:if="${enrollment.accepted}" method="post">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">취소</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/checkIn/' + ${enrollment.id}}"
+                                      th:if="${!enrollment.attended}" method="post">
+                                    <button type="submit" class="btn btn-outline-success btn-sm">체크인</button>
+                                </form>
+                                <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/checkOut/' + ${enrollment.id}}"
+                                      th:if="${enrollment.attended}" method="post">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">체크인 취소</button>
+                                </form>
+                            </td>
+                        </th:block>
                     </tr>
                     </tbody>
                 </table>
