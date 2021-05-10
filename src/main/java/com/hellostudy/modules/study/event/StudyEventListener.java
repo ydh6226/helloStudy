@@ -102,7 +102,7 @@ public class StudyEventListener {
         context.setVariable("host", appProperties.getHost());
 
         EmailMessage emailMessage = EmailMessage.builder()
-                .subject(String.format("스터디 올래, \"%s\" 스터디가 생겼습니다.", study.getTitle()))
+                .subject(subject)
                 .to(account.getEmail())
                 .message(templateEngine.process("mail/simple-link", context))
                 .build();

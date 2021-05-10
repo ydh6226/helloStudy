@@ -1,9 +1,13 @@
 package com.hellostudy.modules.event;
 
 import com.hellostudy.modules.account.Account;
+import com.hellostudy.modules.event.event.EnrollmentAcceptEvent;
+import com.hellostudy.modules.event.event.EnrollmentRejectEvent;
 import com.hellostudy.modules.event.form.EventEditForm;
 import com.hellostudy.modules.study.Study;
+import com.hellostudy.modules.study.event.StudyUpdateEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +21,13 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
-    private final EnrollmentRepository enrollmentRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public Long createEvent(Event event, Account account, Study study) {
         event.initEvent(account, study);
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy().getId(),
+                String.format("'%s' 모임을 만들었습니다.", event.getTitle())));
         return eventRepository.save(event).getId();
     }
 
@@ -43,6 +49,9 @@ public class EventService {
     public void editEvent(Event event, EventEditForm eventEditForm) {
         event.editEvent(eventEditForm);
 
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy().getId(),
+                String.format("'%s' 모임이 변경되었습니다.", event.getTitle())));
+
         //승인 대기 중인 유저가 있는 경우
         if (canAcceptAnotherAccount(event)) {
             acceptAnotherUser(event);
@@ -53,6 +62,9 @@ public class EventService {
     public void eventCancel(Long eventId) {
         Event event = findEventWithEnrollmentsByEventId(eventId);
         eventRepository.delete(event);
+
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy().getId(),
+                String.format("'%s' 모임이 취소되었습니다.", event.getTitle())));
     }
 
     @Transactional
@@ -107,6 +119,7 @@ public class EventService {
         if (!event.accept(enrollmentId)) {
             throw EventException.unRegisterAccountException();
         }
+        eventPublisher.publishEvent(new EnrollmentAcceptEvent(enrollmentId));
     }
 
     @Transactional
@@ -115,6 +128,7 @@ public class EventService {
         if (!event.disAccept(enrollmentId)) {
             throw EventException.unRegisterAccountException();
         }
+        eventPublisher.publishEvent(new EnrollmentRejectEvent(enrollmentId));
     }
 
     private boolean canAcceptAnotherAccount (Event event) {
