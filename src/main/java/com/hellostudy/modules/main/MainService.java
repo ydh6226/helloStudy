@@ -4,6 +4,8 @@ import com.hellostudy.modules.study.Study;
 import com.hellostudy.modules.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +18,7 @@ public class MainService {
 
     private final StudyRepository studyRepository;
 
-    public List<Study> findByStudyByKeyword(String keyword) {
-        return studyRepository.findForSearchStudyByKeyword(keyword);
+    public PageImpl<Study> findByStudyByKeyword(String keyword, Pageable pageable) {
+        return studyRepository.findForSearchStudyByKeyword(keyword, pageable);
     }
 }

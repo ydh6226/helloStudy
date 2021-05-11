@@ -160,4 +160,10 @@ public class StudyController {
 
         return "study/events";
     }
+
+    @GetMapping("/study/data")
+    public String generateTestData(@CurrentUser Account account) {
+        studyService.generateTestStudies(account);
+        return "redirect:/";
+    }
 }

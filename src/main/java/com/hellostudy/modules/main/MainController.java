@@ -8,6 +8,10 @@ import com.hellostudy.modules.zone.Zone;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Slf4j
 @Controller
@@ -36,10 +42,11 @@ public class MainController {
     }
 
     @GetMapping("/search/study")
-    public String studySearch(@CurrentUser Account account, Model model, String keyword) {
+    public String studySearch(@CurrentUser Account account, Model model, String keyword,
+                              @PageableDefault(size = 9, sort = "publishedDateTime") Pageable pageable) {
         addAccountToModel(account, model);
 
-        List<StudyParam> studyParams = mainService.findByStudyByKeyword(keyword)
+        List<StudyParam> studyParams = mainService.findByStudyByKeyword(keyword, pageable)
                 .stream()
                 .map(StudyParam::new)
                 .collect(Collectors.toList());
@@ -55,12 +62,13 @@ public class MainController {
 
         private final int count;
         private final List<T> studies;
+
         public StudyParamWrapper(List<T> studies) {
             this.count = studies.size();
             this.studies = studies;
         }
-
     }
+
     @Data
     private static class StudyParam {
 
@@ -72,6 +80,7 @@ public class MainController {
         private final LocalDateTime publishedDateTime;
         private final List<String> tagTitles;
         private final List<String> zoneLocalNames;
+
         public StudyParam(Study study) {
             this.title = study.getTitle();
             this.path = study.getEncodePath();

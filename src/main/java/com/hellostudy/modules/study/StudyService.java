@@ -180,4 +180,14 @@ public class StudyService {
     public void leave(Account account, Study study) {
         study.deleteMember(account);
     }
+
+    public void generateTestStudies(Account account) {
+        for (int i = 0; i < 30; i++) {
+            String str = "hello" + i;
+            Study study = new Study(str, str, str, str);
+            study.addManager(account);
+            study.publish();
+            studyRepository.save(study);
+        }
+    }
 }
