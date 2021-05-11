@@ -30,9 +30,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 .leftJoin(study.members, account).fetchJoin()
                 .leftJoin(study.tags, tag).fetchJoin()
                 .leftJoin(study.zones, zone).fetchJoin()
-                .where(study.title.contains(keyword)
-                        .or(tagTitleLikes(keyword))
-                        .or(zoneLocalNameOfCityLikes(keyword)))
+                .where((study.published.isTrue().and(study.closed.isFalse()))
+                        .and(study.title.contains(keyword)
+                                .or(tagTitleLikes(keyword))
+                                .or(zoneLocalNameOfCityLikes(keyword))))
                 .distinct()
                 .fetch();
     }
