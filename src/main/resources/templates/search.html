@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+    <div th:replace="fragments.html::main-nav"></div>
+    <div class="container">
+        <div class="row justify-content-center text-center my-5">
+            <h3 th:if="${studyParams.count != 0}">
+                '<span th:text="${keyword}"></span>' 에 해당하는 스터디를 <span th:text="${studyParams.count}"></span> 개 찾았습니다.
+            </h3>
+            <h3 th:if="${studyParams.count == 0}">
+                '<span th:text="${keyword}"></span>' 에 해당하는 스터디를 찾을 수 없습니다.
+            </h3>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="row row-cols-1 row-cols-md-3">
+                    <div class="col mb-4" th:each="study: ${studyParams.studies}">
+                        <div class="card">
+                            <img th:src="${study.image}" class="card-img-top" alt="스터디 배너 이미지">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a th:href="${'/study/' + study.path}" th:text="${study.title}"></a>
+                                </h4>
+                                <p class="card-text" th:text="${study.shortDescription}"></p>
+                                <p class="card-text">
+                                    <span th:replace="fragment/tags.html::tagBadges(${study.tagTitles})"></span>
+                                    <span th:replace="fragment/zones.html::zoneBadges(${study.zoneLocalNames})"></span>
+                                </p>
+                                <p class="d-flex justify-content-between text-muted">
+                                    <span><i class="fas fa-user-circle"></i> <span th:text="${study.memberCount}"></span>명</span>
+                                    <span class="date" th:text="${study.publishedDateTime}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div th:replace="fragments.html::footer"></div>
+    <script th:replace="fragment/event.html::momentJs"></script>
+</body>

@@ -44,9 +44,10 @@ public class MainController {
                 .map(StudyParam::new)
                 .collect(Collectors.toList());
 
-        model.addAttribute("studies", new StudyParamWrapper<>(studyParams));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("studyParams", new StudyParamWrapper<>(studyParams));
 
-        return "";
+        return "search";
     }
 
     @Data
@@ -64,6 +65,8 @@ public class MainController {
     private static class StudyParam {
 
         private final String title;
+        private final String path;
+        private final String image;
         private final String shortDescription;
         private final int memberCount;
         private final LocalDateTime publishedDateTime;
@@ -71,13 +74,17 @@ public class MainController {
         private final List<String> zoneLocalNames;
         public StudyParam(Study study) {
             this.title = study.getTitle();
+            this.path = study.getEncodePath();
+            this.image = study.getImage();
             this.shortDescription = study.getShortDescription();
             this.memberCount = study.getManagers().size() + study.getMembers().size();
             this.publishedDateTime = study.getPublishedDateTime();
-            this.tagTitles = study.getTags().stream()
+            this.tagTitles = study.getTags()
+                    .stream()
                     .map(Tag::getTitle)
                     .collect(Collectors.toList());
-            this.zoneLocalNames = study.getZones().stream()
+            this.zoneLocalNames = study.getZones()
+                    .stream()
                     .map(Zone::getLocalNameOfCity)
                     .collect(Collectors.toList());
         }
