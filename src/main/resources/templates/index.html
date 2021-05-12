@@ -9,10 +9,79 @@
         스터디올레 가입을 완료하려면 <a th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요
     </div>
 
-    <div class="container">
-        <div class="py-5 text-center">
-            <h2>스터디 올래</h2>
+    <!-- 비회원 뷰 -->
+    <div class="container" sec:authorize="!isAuthenticated()">
+        <div class="jumbotron text-center bg-light pb-3 mb-0">
+            <h1 class="display-4">스터디올래</h1>
+            <p class="lead">태그와 지역기반으로 스터디를 찾고 참여하세요.</p>
+            <p class="lead">스터디 모임 관리 기능을 제공합니다.</p>
+            <a class="btn btn-outline-primary mt-2" th:href="@{/sign-up}" role="button">회원가입</a>
         </div>
-        <div th:replace="fragments.html::footer"></div>
+        <div class="row justify-content-center">
+            <div class="col-10 text-center">
+                <hr>
+                <h3 class="mb-4">인기 있는 스터디</h3>
+                <div th:replace="fragments.html::studyCardView(${studies})"></div>
+            </div>
+        </div>
     </div>
+
+    <!-- 회원 뷰 -->
+    <div class="container mt-3" sec:authorize="isAuthenticated()">
+        <div class="row justify-content-center mx-2">
+            <div class="col-2">
+                <div class="row mb-4">
+                    <h3 class="text-muted">관심 스터디 주제</h3>
+                    <ul class="list-group col-12">
+                        <li class="list-group-item" th:each="tag : ${tags}">
+                            <i class="fas fa-tag"></i> <span th:text="${tag.title}"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <h3 class="text-muted">주요 활동 지역</h3>
+                    <ul class="list-group col-12">
+                        <li class="list-group-item" th:each="zone : ${zones}">
+                            <i class="fas fa-globe-asia"></i> <span th:text="${zone.localNameOfCity}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="row mb-4">
+                    <h3 class="col-12 text-muted">참석할 모임</h3>
+                    <div class="col-12">
+                        <div class="row row-cols-1 row-cols-md-2">
+                            <div th:replace="fragment/event.html::eventCardView(${eventsForParticipate})"></div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <h3 class="text-muted col-12">주요 활동지역의 관심 주제 스터디</h3>
+                    <div class="col-12">
+                        <div th:replace="fragments.html::studyCardView(${recommendedStudies})"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row mb-4">
+                    <h3 class="text-muted" th:if="${!managingStudies.isEmpty()}">관리중인 스터디</h3>
+                    <h3 class="text-muted" th:if="${managingStudies.isEmpty()}">관리중인 스터디가 없습니다.</h3>
+                    <ul class="list-group col-12">
+                        <li class="list-group-item" th:each="study : ${managingStudies}" th:text="${study.title}"></li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <h3 class="text-muted" th:if="${!joinedStudies.isEmpty()}">참여중인 스터디</h3>
+                    <h3 class="text-muted" th:if="${joinedStudies.isEmpty()}">참여중인 스터디가 없습니다.</h3>
+                    <ul class="list-group col-12">
+                        <li class="list-group-item" th:each="study : ${joinedStudies}" th:text="${study.title}"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments.html::footer"></div>
+    <script th:replace="fragment/event.html::momentJs"></script>
 </body>

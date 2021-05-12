@@ -5,6 +5,7 @@ import com.hellostudy.modules.account.AccountService;
 import com.hellostudy.modules.account.form.SignUpForm;
 import com.hellostudy.modules.account.Account;
 import com.hellostudy.modules.event.EventService;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

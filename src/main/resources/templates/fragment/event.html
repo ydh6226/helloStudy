@@ -2,6 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
+<div th:fragment="eventCardView(events)" class="col mb-4" th:each="event : ${events}">
+    <div class="card">
+        <div class="card-header" th:text="${event.title}"></div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <i class="far fa-calendar-alt"></i>
+                <span class="day-time" th:text="${event.startDateTime}"></span> 모임 시작
+            </li>
+            <li th:if="${event.isNotClosed()}" class="list-group-item">
+                <i class="fas fa-hourglass-start"></i>
+                <span class="relative-time" th:text="${event.endEnrollmentDateTime}"></span> 모집 마감,
+                총 <span th:text="${event.limitOfEnrollments}"></span> 명 모집 중
+                ( <span th:text="${event.numberOfRemainSpot()}"></span> 자리 남음 )
+            </li>
+            <li th:if="${!event.isNotClosed()}" class="list-group-item">
+                <i class="fas fa-hourglass-start"></i>
+                모집 종료
+            </li>
+            <a class="list-group-item" th:href="@{'/study/' + ${event.study.path} + '/events/' + ${event.id}}">자세히 보기</a>
+        </ul>
+    </div>
+</div>
+
 <script th:fragment="momentJs" type="application/javascript">
     $(function () {
         moment.locale('ko');
@@ -30,5 +53,4 @@
 
     })
 </script>
-
 </html>

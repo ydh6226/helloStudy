@@ -5,6 +5,7 @@ import com.hellostudy.modules.account.repository.AccountRepository;
 import com.hellostudy.modules.account.AccountService;
 import com.hellostudy.modules.account.form.SignUpForm;
 import com.hellostudy.modules.account.Account;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.tag.Tag;
 import com.hellostudy.modules.settings.form.TagForm;
 import com.hellostudy.modules.tag.TagRepository;

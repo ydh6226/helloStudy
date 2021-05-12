@@ -1,6 +1,6 @@
 package com.hellostudy.modules.study.validator;
 
-import com.hellostudy.modules.study.StudyRepository;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.study.form.StudyForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

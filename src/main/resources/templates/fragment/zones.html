@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<th:block th:fragment="zoneBadges(zoneLocalNames)">
+    <span th:each="zoneLocalName: ${zoneLocalNames}"
+          class="font-weight-light text-monospace badge badge-pill badge-primary mr-2">
+        <a th:href="${'/search/zone/' + zoneLocalName}" class="text-decoration-none text-white">
+            <i class="fas fa-globe"></i><span th:text="${zoneLocalName}">zoneLocalName</span>
+        </a>
+    </span>
+</th:block>
 <script th:fragment="update-zone(baseUrl)" type="application/javascript" th:inline="javascript">
     $(function () {
         function zoneRequest(url, zoneFullName) {
@@ -43,7 +51,6 @@
 
         tagify.DOM.input.classList.add('form-control');
         tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
-
     })
 </script>
 </html>

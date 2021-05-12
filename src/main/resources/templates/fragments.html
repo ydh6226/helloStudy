@@ -57,7 +57,7 @@
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <form th:action="@{/search/study}" class="form-inline" method="get">
-                    <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기" aria-label="Search">
+                    <input class="form-control mr-sm-2" name="keyword" th:value="${keyword}" type="search" placeholder="스터디 찾기" aria-label="Search">
                 </form>
             </li>
         </ul>
@@ -112,6 +112,29 @@
     <a th:href="@{/settings/account}" class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'account'} ? active">계정</a>
 </div>
 
+<div th:fragment="studyCardView(studies)" class="row row-cols-1 row-cols-md-3">
+    <div class="col mb-4" th:each="study: ${studies}">
+        <div class="card">
+            <img th:src="${study.image}" class="card-img-top" alt="스터디 배너 이미지">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <a th:href="${'/study/' + study.path}" th:text="${study.title}"></a>
+                </h4>
+                <p class="card-text" th:text="${study.shortDescription}"></p>
+                <p class="card-text">
+                    <span th:replace="fragment/tags.html::tagBadges(${study.tagTitles})"></span>
+                    <span th:replace="fragment/zones.html::zoneBadges(${study.zoneLocalNames})"></span>
+                </p>
+                <p class="d-flex justify-content-between text-muted">
+                    <span><i class="fas fa-user-circle"></i> <span th:text="${study.memberCount}"></span>명</span>
+                    <span class="date" th:text="${study.publishedDateTime}"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script type="application/javascript" th:fragment="form-validation">
     (function () {
         'use strict';
@@ -148,5 +171,4 @@
         <small class="d-block mb-3 text-muted">&copy; 2020</small>
     </div>
 </footer>
-
 </html>

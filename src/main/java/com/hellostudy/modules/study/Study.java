@@ -61,6 +61,8 @@ public class Study {
 
     private boolean useBanner;
 
+    private int memberCount = 1;
+
     public Study(String path, String title, String shortDescription, String fullDescription) {
         this.path = path;
         this.title = title;
@@ -162,6 +164,7 @@ public class Study {
     }
 
     public void addMember(Account account) {
+        memberCount++;
         if (!members.add(account)) {
             throw new IllegalStateException("이미 가입한 스터디 입니다.");
         }

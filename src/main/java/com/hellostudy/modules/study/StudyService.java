@@ -3,6 +3,7 @@ package com.hellostudy.modules.study;
 import com.hellostudy.modules.account.Account;
 import com.hellostudy.modules.study.event.StudyCreateEvent;
 import com.hellostudy.modules.study.event.StudyUpdateEvent;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.tag.Tag;
 import com.hellostudy.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;
@@ -178,5 +179,15 @@ public class StudyService {
 
     public void leave(Account account, Study study) {
         study.deleteMember(account);
+    }
+
+    public void generateTestStudies(Account account) {
+        for (int i = 0; i < 30; i++) {
+            String str = "hello" + i;
+            Study study = new Study(str, str, str, str);
+            study.addManager(account);
+            study.publish();
+            studyRepository.save(study);
+        }
     }
 }
