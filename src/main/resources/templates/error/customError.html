@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html::head"></head>
+<body class="bg-light">
+
+<div class="text-center">
+    <p>잘못된 요청입니다.</p>
+    <p th:text="${message}"></p>
+</div>
+</body>
