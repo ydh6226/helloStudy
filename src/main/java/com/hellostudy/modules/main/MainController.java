@@ -2,7 +2,12 @@ package com.hellostudy.modules.main;
 
 import com.hellostudy.modules.account.CurrentUser;
 import com.hellostudy.modules.account.Account;
+import com.hellostudy.modules.account.repository.AccountRepository;
+import com.hellostudy.modules.event.Enrollment;
+import com.hellostudy.modules.event.Event;
+import com.hellostudy.modules.event.repository.EnrollmentRepository;
 import com.hellostudy.modules.study.Study;
+import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.tag.Tag;
 import com.hellostudy.modules.zone.Zone;
 import lombok.Data;
@@ -10,18 +15,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
@@ -31,9 +33,42 @@ public class MainController {
 
     private final MainService mainService;
 
+    private final StudyRepository studyRepository;
+
+    private final AccountRepository accountRepository;
+
+    private final EnrollmentRepository enrollmentRepository;
+
     @GetMapping("/")
     public String home(@CurrentUser Account account, Model model) {
-        addAccountToModel(account, model);
+        if (account == null) {
+            List<StudyParam> studyParams = studyRepository.findTop9ByOrderByMemberCountDesc()
+                    .stream()
+                    .map(StudyParam::new)
+                    .collect(Collectors.toList());
+            model.addAttribute("studies", studyParams);
+        } else {
+            Account findAccount = accountRepository.findAccountWithTagsAndZonesById(account.getId());
+            model.addAttribute("account", findAccount);
+            model.addAttribute("tags", findAccount.getTags());
+            model.addAttribute("zones", findAccount.getZones());
+            model.addAttribute("managingStudies", studyRepository.findAllByManagersId(account.getId()));
+            model.addAttribute("joinedStudies", studyRepository.findAllByMembersId(account.getId()));
+
+            List<StudyParam> recommendedStudies =
+                    studyRepository.findStudyByTagsAndZones(findAccount.getTags(), findAccount.getZones())
+                            .stream()
+                            .map(StudyParam::new)
+                            .collect(Collectors.toList());
+            model.addAttribute("recommendedStudies", recommendedStudies);
+
+            List<Event> eventsForParticipate =
+                    enrollmentRepository.findAllNeedToParticipateByAccountId(account.getId())
+                            .stream()
+                            .map(Enrollment::getEvent)
+                            .collect(Collectors.toList());
+            model.addAttribute("eventsForParticipate", eventsForParticipate);
+        }
         return "index";
     }
 
@@ -47,7 +82,7 @@ public class MainController {
                               @PageableDefault(size = 9, sort = "publishedDateTime", direction = DESC) Pageable pageable) {
         addAccountToModel(account, model);
 
-        PageImpl<Study> studies = mainService.findByStudyByKeyword(keyword, pageable);
+        PageImpl<Study> studies = mainService.findPagedStudyByKeyword(keyword, pageable);
         List<StudyParam> studyParams = studies
                 .stream()
                 .map(StudyParam::new)
@@ -57,7 +92,7 @@ public class MainController {
         model.addAttribute("studyParams", new StudyParamWrapper<>(studyParams));
         model.addAttribute("pageParam", new PageParam(studies));
         model.addAttribute("sort",
-                pageable.getSort().toString().contains("publishedDateTime")? "publishedDateTime" : "memberCount");
+                pageable.getSort().toString().contains("publishedDateTime") ? "publishedDateTime" : "memberCount");
         return "search";
     }
 
@@ -84,6 +119,7 @@ public class MainController {
         private final LocalDateTime publishedDateTime;
         private final List<String> tagTitles;
         private final List<String> zoneLocalNames;
+
         public StudyParam(Study study) {
             this.title = study.getTitle();
             this.path = study.getEncodePath();

@@ -5,7 +5,7 @@ import com.hellostudy.infra.mail.EmailMessage;
 import com.hellostudy.infra.mail.EmailService;
 import com.hellostudy.modules.account.Account;
 import com.hellostudy.modules.event.Enrollment;
-import com.hellostudy.modules.event.EnrollmentRepository;
+import com.hellostudy.modules.event.repository.EnrollmentRepository;
 import com.hellostudy.modules.event.Event;
 import com.hellostudy.modules.notification.Notification;
 import com.hellostudy.modules.notification.NotificationDto;

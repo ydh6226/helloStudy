@@ -1,5 +1,6 @@
-package com.hellostudy.modules.event;
+package com.hellostudy.modules.event.repository;
 
+import com.hellostudy.modules.event.Event;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 public interface StudyRepository extends JpaRepository<Study, Long>, StudyRepositoryCustom {
     boolean existsByPath(String path);
@@ -40,4 +42,10 @@ public interface StudyRepository extends JpaRepository<Study, Long>, StudyReposi
 
     @EntityGraph(attributePaths = {"tags", "zones"})
     Study findStudyWithTagsAndZonesById(Long studyId);
+
+    List<Study> findTop9ByOrderByMemberCountDesc();
+
+    List<Study> findAllByManagersId(Long managerId);
+
+    List<Study> findAllByMembersId(Long managerId);
 }

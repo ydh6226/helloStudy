@@ -4,6 +4,7 @@ import com.hellostudy.modules.account.Account;
 import com.hellostudy.modules.event.event.EnrollmentAcceptEvent;
 import com.hellostudy.modules.event.event.EnrollmentRejectEvent;
 import com.hellostudy.modules.event.form.EventEditForm;
+import com.hellostudy.modules.event.repository.EventRepository;
 import com.hellostudy.modules.study.Study;
 import com.hellostudy.modules.study.event.StudyUpdateEvent;
 import lombok.RequiredArgsConstructor;

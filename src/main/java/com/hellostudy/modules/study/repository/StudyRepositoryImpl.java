@@ -1,24 +1,21 @@
 package com.hellostudy.modules.study.repository;
 
 import com.hellostudy.modules.study.Study;
+import com.hellostudy.modules.tag.Tag;
+import com.hellostudy.modules.zone.Zone;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
-import static com.hellostudy.modules.account.QAccount.account;
 import static com.hellostudy.modules.study.QStudy.study;
-import static com.hellostudy.modules.tag.QTag.tag;
-import static com.hellostudy.modules.zone.QZone.zone;
 
 public class StudyRepositoryImpl extends QuerydslRepositorySupport implements StudyRepositoryCustom {
 
@@ -30,7 +27,7 @@ public class StudyRepositoryImpl extends QuerydslRepositorySupport implements St
     }
 
     @Override
-    public PageImpl<Study> findForSearchStudyByKeyword(String keyword, Pageable pageable) {
+    public PageImpl<Study> findPagedStudyByKeyword(String keyword, Pageable pageable) {
         JPAQuery<Study> queryResult = query.selectFrom(study)
                 .where((study.published.isTrue().and(study.closed.isFalse()))
                         .and(studyTitleLikes(keyword)
@@ -44,6 +41,13 @@ public class StudyRepositoryImpl extends QuerydslRepositorySupport implements St
         return new PageImpl<>(pagingResult.getResults(), pageable, pagingResult.getTotal());
     }
 
+    @Override
+    public List<Study> findStudyByTagsAndZones(Set<Tag> tags, Set<Zone> zones) {
+        return query.selectFrom(study)
+                .where(study.tags.any().in(tags)
+                        .and(study.zones.any().in(zones)))
+                .fetch();
+    }
     private BooleanExpression studyTitleLikes(String keyword) {
         return study.title.containsIgnoreCase(keyword);
     }

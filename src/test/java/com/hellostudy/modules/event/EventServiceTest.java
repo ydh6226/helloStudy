@@ -6,6 +6,8 @@ import com.hellostudy.modules.account.AccountService;
 import com.hellostudy.modules.account.form.SignUpForm;
 import com.hellostudy.modules.event.form.EventEditForm;
 import com.hellostudy.modules.event.form.EventForm;
+import com.hellostudy.modules.event.repository.EnrollmentRepository;
+import com.hellostudy.modules.event.repository.EventRepository;
 import com.hellostudy.modules.study.Study;
 import com.hellostudy.modules.study.repository.StudyRepository;
 import com.hellostudy.modules.study.StudyService;
