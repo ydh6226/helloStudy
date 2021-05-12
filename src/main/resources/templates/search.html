@@ -5,14 +5,29 @@
 <body class="bg-light">
     <div th:replace="fragments.html::main-nav"></div>
     <div class="container">
-        <div class="row justify-content-center text-center my-5">
+        <div class="row justify-content-center text-center mt-5">
             <h3 th:if="${studyParams.count != 0}">
-                '<span th:text="${keyword}"></span>' 에 해당하는 스터디를 <span th:text="${studyParams.count}"></span> 개 찾았습니다.
+                '<span th:text="${keyword}"></span>' 에 해당하는 스터디를 <span th:text="${pageParam.totalElements}"></span> 개 찾았습니다.
             </h3>
             <h3 th:if="${studyParams.count == 0}">
                 '<span th:text="${keyword}"></span>' 에 해당하는 스터디를 찾을 수 없습니다.
             </h3>
         </div>
+
+        <div th:if="${studyParams.count != 0}" class="row justify-content-center my-4">
+            <div class="btn-group">
+                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    검색 결과 정렬 방식
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" th:classappend="${#strings.equals(sort, 'publishedDateTime')}? active"
+                       th:href="'/search/study?keyword=' + ${keyword} + '&sort=publishedDateTime,desc'">스터디 공개일</a>
+                    <a class="dropdown-item" th:classappend="${#strings.equals(sort, 'memberCount')}? active"
+                       th:href="'/search/study?keyword=' + ${keyword} + '&sort=memberCount,desc'">멤버수</a>
+                </div>
+            </div>
+        </div>
+
         <div class="row justify-content-center">
             <div class="col-10">
                 <div class="row row-cols-1 row-cols-md-3">
@@ -38,7 +53,23 @@
                 </div>
             </div>
         </div>
-
+        <div class="row justify-content-center" th:if="${studyParams.count != 0}">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${pageParam.hasPrevious  == false}? disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item" th:classappend="${pageParam.currentPage == i - 1}? active"
+                        th:each="i : ${#numbers.sequence(1, pageParam.totalPage)}">
+                        <a class="page-link"
+                           th:href="'/search/study?keyword=' + ${keyword} + '&page=' + ${i - 1} + '&sort=' + ${sort} + ',desc'" th:text="${i}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${pageParam.hasNext  == false}? disabled">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
     </div>
     <div th:replace="fragments.html::footer"></div>

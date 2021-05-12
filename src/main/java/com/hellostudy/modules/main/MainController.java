@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
 @Controller
@@ -43,17 +44,20 @@ public class MainController {
 
     @GetMapping("/search/study")
     public String studySearch(@CurrentUser Account account, Model model, String keyword,
-                              @PageableDefault(size = 9, sort = "publishedDateTime") Pageable pageable) {
+                              @PageableDefault(size = 9, sort = "publishedDateTime", direction = DESC) Pageable pageable) {
         addAccountToModel(account, model);
 
-        List<StudyParam> studyParams = mainService.findByStudyByKeyword(keyword, pageable)
+        PageImpl<Study> studies = mainService.findByStudyByKeyword(keyword, pageable);
+        List<StudyParam> studyParams = studies
                 .stream()
                 .map(StudyParam::new)
                 .collect(Collectors.toList());
 
         model.addAttribute("keyword", keyword);
         model.addAttribute("studyParams", new StudyParamWrapper<>(studyParams));
-
+        model.addAttribute("pageParam", new PageParam(studies));
+        model.addAttribute("sort",
+                pageable.getSort().toString().contains("publishedDateTime")? "publishedDateTime" : "memberCount");
         return "search";
     }
 
@@ -80,7 +84,6 @@ public class MainController {
         private final LocalDateTime publishedDateTime;
         private final List<String> tagTitles;
         private final List<String> zoneLocalNames;
-
         public StudyParam(Study study) {
             this.title = study.getTitle();
             this.path = study.getEncodePath();
@@ -96,6 +99,24 @@ public class MainController {
                     .stream()
                     .map(Zone::getLocalNameOfCity)
                     .collect(Collectors.toList());
+        }
+
+    }
+
+    @Data
+    private static class PageParam {
+        private final boolean hasPrevious;
+        private final boolean hasNext;
+        private final int currentPage;
+        private final int totalPage;
+        private final long totalElements;
+
+        public PageParam(PageImpl<?> pageResult) {
+            hasPrevious = pageResult.hasPrevious();
+            hasNext = pageResult.hasNext();
+            currentPage = pageResult.getNumber();
+            totalPage = pageResult.getTotalPages();
+            totalElements = pageResult.getTotalElements();
         }
     }
 
